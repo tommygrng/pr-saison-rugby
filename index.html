@@ -6,150 +6,138 @@
 <title>Pré-Saison 2026-27 — Suivi Charge</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root {
-  --bg:#f7f7f5; --surface:#fff; --surface2:#f2f1ee; --border:#e0dfd9;
-  --text:#1a1a18; --text2:#6b6b67; --text3:#9e9e99;
-  --green:#1D9E75; --green-l:#e1f5ee; --red:#E24B4A; --red-l:#fcebeb;
-  --blue:#378ADD; --blue-l:#e6f1fb; --amber:#BA7517; --amber-l:#faeeda;
-  --purple:#7F77DD; --purple-l:#EEEDFE;
-  --r:10px; --rs:6px;
+:root{
+  --bg:#f7f7f5;--surface:#fff;--s2:#f2f1ee;--border:#e0dfd9;
+  --text:#1a1a18;--t2:#6b6b67;--t3:#9e9e99;
+  --green:#1D9E75;--gl:#e1f5ee;--red:#E24B4A;--rl:#fcebeb;
+  --blue:#378ADD;--bl:#e6f1fb;--purple:#7F77DD;--pl:#EEEDFE;
+  --r:10px;--rs:6px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px}
-a{color:inherit;text-decoration:none}
-
 /* HEADER */
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:11px 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200}
 header h1{font-size:15px;font-weight:600}
-header .pill{font-size:11px;color:var(--text2);background:var(--surface2);padding:3px 9px;border-radius:20px}
-.hactions{margin-left:auto;display:flex;gap:6px}
-.btn{padding:6px 13px;border-radius:var(--rs);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);transition:all .12s;white-space:nowrap}
-.btn:hover{background:var(--surface2)}
-.btn-g{background:var(--green);color:#fff;border-color:var(--green)}
-.btn-g:hover{background:#0F6E56}
-.btn-r{background:var(--red-l);color:var(--red);border-color:#f7c1c1}
-.btn-r:hover{background:#f7c1c1}
-
+.pill{font-size:11px;color:var(--t2);background:var(--s2);padding:2px 9px;border-radius:20px}
+.hact{margin-left:auto;display:flex;gap:6px}
+.btn{padding:6px 12px;border-radius:var(--rs);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);transition:all .12s;white-space:nowrap}
+.btn:hover{background:var(--s2)}
+.btng{background:var(--green);color:#fff;border-color:var(--green)}.btng:hover{background:#0F6E56}
+.btnr{background:var(--rl);color:var(--red);border-color:#f7c1c1}.btnr:hover{background:#f7c1c1}
 /* NAV */
-.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:0;overflow-x:auto}
-.ntab{padding:11px 18px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);white-space:nowrap;transition:all .12s}
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 18px;display:flex;overflow-x:auto}
+.ntab{padding:11px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--t2);white-space:nowrap;transition:all .12s}
 .ntab.active{border-bottom-color:var(--green);color:var(--green)}
 .ntab:hover:not(.active){color:var(--text)}
-
 /* MAIN */
-.main{padding:16px 20px;max-width:1400px;margin:0 auto}
+.main{padding:14px 18px;max-width:1400px;margin:0 auto}
 .page{display:none}.page.active{display:block}
-
 /* WEEK BAR */
-.wbar{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.wchip{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);transition:all .12s}
-.wchip:hover{background:var(--surface2)}
+.wbar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.wchip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--t2);transition:all .12s}
+.wchip:hover{background:var(--s2)}
 .wchip.active{background:var(--green);color:#fff;border-color:var(--green)}
 .wchip.recup{border-style:dashed}
-.wchip.usi{border-color:var(--blue);color:var(--blue)}
-.wchip.usi.active{background:var(--blue);color:#fff}
-.week-reset{font-size:11px;color:var(--red);cursor:pointer;padding:4px 8px;border:1px solid #f7c1c1;border-radius:var(--rs);background:var(--red-l);margin-left:auto}
-.week-reset:hover{background:#f7c1c1}
-
+.wchip.usi{border-color:var(--blue);color:var(--blue)}.wchip.usi.active{background:var(--blue);color:#fff}
 /* TWO COL */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:860px){.two-col{grid-template-columns:1fr}}
-
-/* GROUP COL */
-.gcol{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.ghead{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.gbadge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:.05em}
-.ba{background:var(--blue-l);color:#185FA5}
-.bav{background:var(--purple-l);color:#3C3489}
-.b7{background:var(--green-l);color:#085041}
-.ghead h3{font-size:13px;font-weight:600}
-
-/* KPI ROW */
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
-.kpi{background:var(--surface2);padding:8px 12px}
-.kpi-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-.kpi-plan{font-size:16px;font-weight:600}
-.kpi-real{font-size:10px;color:var(--text2);margin-top:1px}
-.kpi-ecart{font-size:11px;font-weight:600;margin-top:1px}
-.ep{color:var(--green)}.en{color:var(--red)}.ez{color:var(--text3)}
-
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:800px){.two{grid-template-columns:1fr}}
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.card-h{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--s2)}
+.card-h h3{font-size:13px;font-weight:600}
+.card-b{padding:12px 14px}
+/* BADGE */
+.gbadge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.05em}
+.ba{background:var(--bl);color:#185FA5}.bav{background:var(--pl);color:#3C3489}.b7{background:var(--gl);color:#085041}
+/* KPI */
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.kpi{background:var(--s2);padding:8px 10px}
+.kl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.kv{font-size:17px;font-weight:600}
+.kr{font-size:10px;color:var(--t2);margin-top:1px}
+.ke{font-size:11px;font-weight:600;margin-top:1px}
+.ep{color:var(--green)}.en{color:var(--red)}.ez{color:var(--t3)}
 /* SESSIONS */
-.slist{padding:10px;display:flex;flex-direction:column;gap:6px}
+.slist{padding:8px;display:flex;flex-direction:column;gap:5px}
 .sitem{border:1px solid var(--border);border-radius:var(--rs);overflow:visible}
-.sitem.done-item{border-color:#9FE1CB}
-.shead{display:flex;align-items:center;gap:8px;padding:9px 11px;cursor:default;user-select:none}
-.sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.slabel{font-size:12px;font-weight:500;flex:1}
-.splan{font-size:10px;color:var(--text3)}
-.scheck{width:17px;height:17px;border-radius:4px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
-.scheck.done{background:var(--green);border-color:var(--green);color:#fff}
-.sbody{padding:10px 11px;border-top:1px solid var(--border);background:var(--surface2)}
-.igrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.sitem.done{border-color:#9FE1CB}
+.shead{display:flex;align-items:center;gap:7px;padding:8px 10px;cursor:pointer;user-select:none}
+.shead:hover{background:var(--s2)}
+.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.slbl{font-size:12px;font-weight:500;flex:1}
+.splan{font-size:10px;color:var(--t3)}
+.sck{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.sck.done{background:var(--green);border-color:var(--green);color:#fff}
+.sbody{padding:10px;border-top:1px solid var(--border);background:var(--s2)}
+.igrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:8px}
 .ifield{display:flex;flex-direction:column;gap:3px}
-.ifield label{font-size:10px;color:var(--text2)}
-.ifield input{padding:6px 8px;border:1px solid var(--border);border-radius:var(--rs);font-size:13px;background:var(--surface);color:var(--text);width:100%}
+.ifield label{font-size:10px;color:var(--t2)}
+.ifield input{padding:6px 7px;border:1px solid var(--border);border-radius:var(--rs);font-size:13px;background:var(--surface);color:var(--text);width:100%}
 .ifield input:focus{outline:none;border-color:var(--green)}
-.pref{font-size:9px;color:var(--text3);margin-top:1px}
-.sactions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-
-/* CHART SECTIONS */
-.csec{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:14px}
-.csec h3{font-size:13px;font-weight:600;margin-bottom:3px}
-.csub{font-size:10px;color:var(--text3);margin-bottom:10px}
-.ctabs{display:flex;gap:5px;margin-bottom:12px}
-.ctab{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2)}
+.pref{font-size:9px;color:var(--t3);margin-top:1px}
+.sact{display:flex;gap:6px;flex-wrap:wrap}
+/* CHART */
+.csec{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:12px}
+.csec h3{font-size:13px;font-weight:600;margin-bottom:2px}
+.csub{font-size:10px;color:var(--t3);margin-bottom:10px}
+.ctabs{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.ctab{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--t2)}
 .ctab.active{background:var(--text);color:#fff;border-color:var(--text)}
-.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)}
+.legend{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--t2)}
 .ldot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
-
-/* DETAIL TABLE */
-.dtable{width:100%;border-collapse:collapse;font-size:11px;margin-top:6px}
-.dtable th{text-align:left;padding:5px 7px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);font-weight:600}
-.dtable td{padding:5px 7px;border-bottom:1px solid var(--border)}
-.dtable tr:last-child td{border-bottom:none}
-
-/* CONFIG PAGE */
-.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-@media(max-width:860px){.cfg-grid{grid-template-columns:1fr}}
-.cfg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.cfg-head{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2)}
-.cfg-head h3{font-size:13px;font-weight:600}
-.cfg-body{padding:12px 14px}
-.cfg-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+/* TABLE */
+.dt{width:100%;border-collapse:collapse;font-size:11px}
+.dt th{text-align:left;padding:5px 7px;background:var(--s2);border-bottom:1px solid var(--border);font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--t2);font-weight:600}
+.dt td{padding:5px 7px;border-bottom:1px solid var(--border)}
+.dt tr:last-child td{border-bottom:none}
+/* CONFIG */
+.cfg-hdr{display:grid;gap:6px;padding:0 0 4px;margin-bottom:4px}
+.cfg-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
 .cfg-row:last-child{border-bottom:none}
-.cfg-stype{font-size:12px;font-weight:500;width:80px;flex-shrink:0;display:flex;align-items:center;gap:5px}
-.cfg-inputs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex:1}
-.cfg-inputs input{padding:5px 7px;border:1px solid var(--border);border-radius:var(--rs);font-size:12px;background:var(--surface);color:var(--text);width:100%;text-align:center}
+.cfg-lbl{font-size:11px;font-weight:500;width:72px;flex-shrink:0;display:flex;align-items:center;gap:5px}
+.cfg-inputs{display:grid;gap:6px;flex:1}
+.cfg-inputs input{padding:5px 6px;border:1px solid var(--border);border-radius:var(--rs);font-size:12px;background:var(--surface);color:var(--text);width:100%;text-align:center}
 .cfg-inputs input:focus{outline:none;border-color:var(--green)}
-.cfg-hdr{display:grid;grid-template-columns:80px repeat(4,1fr);gap:6px;padding:0 0 4px;margin-bottom:4px}
-.cfg-hdr span{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);text-align:center}
-
-/* WEEK CONFIG */
-.wcfg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
-.wcfg-head{padding:11px 14px;border-bottom:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;gap:10px}
-.wcfg-body{padding:12px 14px}
-.coeff-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.coeff-row label{font-size:12px;color:var(--text2);width:120px}
-.coeff-row input{padding:5px 8px;border:1px solid var(--border);border-radius:var(--rs);font-size:13px;width:80px;background:var(--surface);color:var(--text)}
-.coeff-row input:focus{outline:none;border-color:var(--green)}
-.sess-picker{display:flex;flex-direction:column;gap:4px}
-.sess-picker label{font-size:11px;color:var(--text2);margin-bottom:2px}
-.sess-chips{display:flex;flex-wrap:wrap;gap:5px}
-.sess-chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);user-select:none}
-.sess-chip.sel{color:#fff}
-
-/* TOAST */
-.toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:9px 16px;border-radius:var(--rs);font-size:12px;font-weight:500;opacity:0;transition:opacity .25s;pointer-events:none;z-index:999}
-.toast.show{opacity:1}
-
-/* CONFIRM MODAL */
+/* WEEK CFG */
+.wcfg{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.wcfg-h{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--s2);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.wcfg-b{padding:12px 14px}
+.coeff-box{display:flex;align-items:center;gap:8px;margin-left:auto}
+.coeff-box label{font-size:11px;color:var(--t2)}
+.coeff-box input{padding:4px 7px;border:1px solid var(--border);border-radius:var(--rs);font-size:13px;font-weight:600;width:70px;text-align:center;background:var(--surface);color:var(--text)}
+.coeff-box input:focus{outline:none;border-color:var(--green)}
+.sess-table{width:100%;border-collapse:collapse;font-size:12px}
+.sess-table th{padding:5px 8px;text-align:center;font-size:10px;color:var(--t2);font-weight:500;border-bottom:1px solid var(--border)}
+.sess-table th:first-child{text-align:left}
+.sess-table td{padding:4px 8px;border-bottom:1px solid var(--border);text-align:center}
+.sess-table td:first-child{text-align:left;font-weight:500;display:flex;align-items:center;gap:6px}
+.sess-table tr:last-child td{border-bottom:none}
+.num-btn{width:22px;height:22px;border-radius:4px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;color:var(--t2);transition:all .1s}
+.num-btn:hover{background:var(--s2);color:var(--text)}
+.num-val{min-width:20px;text-align:center;font-size:13px;font-weight:600;display:inline-block}
+/* REF TABLE */
+.ref-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:800px){.ref-grid{grid-template-columns:1fr}}
+.ref-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ref-h{padding:9px 12px;border-bottom:1px solid var(--border);background:var(--s2);display:flex;align-items:center;gap:8px}
+.ref-b{padding:10px 12px}
+.ref-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border)}
+.ref-row:last-child{border-bottom:none}
+.ref-row label{font-size:11px;color:var(--t2);width:60px;flex-shrink:0}
+.ref-row input{padding:5px 7px;border:1px solid var(--border);border-radius:var(--rs);font-size:13px;font-weight:600;width:100%;background:var(--surface);color:var(--text)}
+.ref-row input:focus{outline:none;border-color:var(--green)}
+/* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:500;display:none;align-items:center;justify-content:center}
 .overlay.show{display:flex}
-.modal{background:var(--surface);border-radius:var(--r);padding:24px;max-width:360px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.15)}
-.modal h4{font-size:15px;font-weight:600;margin-bottom:8px}
-.modal p{font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.6}
+.modal{background:var(--surface);border-radius:var(--r);padding:22px;max-width:340px;width:90%}
+.modal h4{font-size:14px;font-weight:600;margin-bottom:8px}
+.modal p{font-size:12px;color:var(--t2);margin-bottom:16px;line-height:1.6}
 .modal-btns{display:flex;gap:8px;justify-content:flex-end}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:8px 15px;border-radius:var(--rs);font-size:12px;font-weight:500;opacity:0;transition:opacity .25s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
@@ -157,11 +145,11 @@ header .pill{font-size:11px;color:var(--text2);background:var(--surface2);paddin
 <header>
   <h1>⚡ Pré-Saison 2026-27</h1>
   <span class="pill">Rugby · Charge GPS</span>
-  <div class="hactions">
-    <button class="btn" onclick="exportData()">⬇ Exporter</button>
-    <button class="btn" onclick="triggerImport()">⬆ Importer</button>
+  <div class="hact">
+    <button class="btn" onclick="exportData()">⬇ Export</button>
+    <button class="btn" onclick="triggerImport()">⬆ Import</button>
     <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
-    <button class="btn btn-g" onclick="saveAll()">💾 Sauvegarder</button>
+    <button class="btn btng" onclick="saveAll()">💾 Sauvegarder</button>
   </div>
 </header>
 
@@ -175,286 +163,306 @@ header .pill{font-size:11px;color:var(--text2);background:var(--surface2);paddin
 
 <div class="main">
 
-<!-- SAISIE -->
+<!-- ══ SAISIE ══ -->
 <div id="page-saisie" class="page active">
-  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-    <div class="wbar" id="wbar-saisie" style="flex:1;margin-bottom:0"></div>
-    <button class="week-reset" id="week-reset-btn" onclick="confirmResetWeek()">🗑 Effacer semaine</button>
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+    <div class="wbar" id="wbar-saisie" style="margin-bottom:0;flex:1"></div>
+    <button class="btn btnr" onclick="confirmResetWeek()">🗑 Effacer semaine</button>
   </div>
-  <div style="margin-bottom:14px"></div>
-  <div class="two-col" id="saisie-cols"></div>
+  <div class="two" id="saisie-cols"></div>
 </div>
 
-<!-- ANALYSE -->
+<!-- ══ ANALYSE ══ -->
 <div id="page-analyse" class="page">
   <div class="wbar" id="wbar-analyse"></div>
   <div class="csec">
-    <h3>Contribution des séances — semaine sélectionnée</h3>
-    <div class="csub">Barres empilées par type de séance · Plan vs Réalisé</div>
-    <div class="ctabs" id="at-metric">
-      <div class="ctab active" onclick="setAMetric('course',this)">Course</div>
-      <div class="ctab" onclick="setAMetric('hsr',this)">HSR</div>
-      <div class="ctab" onclick="setAMetric('accdec',this)">AccDec</div>
-      <div class="ctab" onclick="setAMetric('dist',this)">Dist</div>
+    <h3>Contribution par séance — semaine sélectionnée</h3>
+    <div class="csub">Plan vs Réalisé · écart par rapport aux valeurs de référence de chaque séance type</div>
+    <div class="ctabs" id="at-m">
+      <div class="ctab active" onclick="setAM('course',this)">Course</div>
+      <div class="ctab" onclick="setAM('hsr',this)">HSR</div>
+      <div class="ctab" onclick="setAM('accdec',this)">AccDec</div>
+      <div class="ctab" onclick="setAM('dist',this)">Dist</div>
     </div>
     <div class="legend" id="a-legend"></div>
-    <div style="position:relative;height:260px"><canvas id="chart-contrib" role="img" aria-label="Contribution séances semaine"></canvas></div>
+    <div style="position:relative;height:250px"><canvas id="chart-contrib" role="img" aria-label="Contribution séances"></canvas></div>
   </div>
   <div class="csec">
-    <h3>Progression saison — toutes les semaines</h3>
-    <div class="csub">Réalisé vs plan · S30 → S37</div>
-    <div class="ctabs" id="at-season">
-      <div class="ctab active" onclick="setASeason('course',this)">Course</div>
-      <div class="ctab" onclick="setASeason('hsr',this)">HSR</div>
-      <div class="ctab" onclick="setASeason('accdec',this)">AccDec</div>
+    <h3>Progression saison — toutes semaines</h3>
+    <div class="csub">Réalisé vs objectif hebdo (référence × coefficient) · ARR et AV</div>
+    <div class="ctabs" id="at-s">
+      <div class="ctab active" onclick="setAS('course',this)">Course</div>
+      <div class="ctab" onclick="setAS('hsr',this)">HSR</div>
+      <div class="ctab" onclick="setAS('accdec',this)">AccDec</div>
+      <div class="ctab" onclick="setAS('dist',this)">Dist</div>
     </div>
-    <div style="position:relative;height:240px"><canvas id="chart-season" role="img" aria-label="Progression saison"></canvas></div>
+    <div style="position:relative;height:230px"><canvas id="chart-season" role="img" aria-label="Progression saison"></canvas></div>
   </div>
-  <div class="two-col">
-    <div class="csec"><h3>Détail ARR / 3/4</h3><table class="dtable" id="tbl-arr"></table></div>
-    <div class="csec"><h3>Détail Avants</h3><table class="dtable" id="tbl-av"></table></div>
+  <div class="two">
+    <div class="csec"><h3>Détail ARR / 3/4</h3><table class="dt" id="tbl-arr"></table></div>
+    <div class="csec"><h3>Détail Avants</h3><table class="dt" id="tbl-av"></table></div>
   </div>
 </div>
 
-<!-- PLAN -->
+<!-- ══ PLAN ══ -->
 <div id="page-plan" class="page">
   <div class="csec">
     <h3>Plan de charge saison</h3>
-    <div class="csub">Cibles hebdomadaires S30→S37 · contribution par type de séance</div>
-    <div class="ctabs" id="pt-metric">
-      <div class="ctab active" onclick="setPMetric('course',this)">Course</div>
-      <div class="ctab" onclick="setPMetric('hsr',this)">HSR</div>
-      <div class="ctab" onclick="setPMetric('accdec',this)">AccDec</div>
-      <div class="ctab" onclick="setPMetric('dist',this)">Dist</div>
+    <div class="csub">Objectif hebdo = référence groupe × coefficient · écart réalisé vs objectif semaine</div>
+    <div class="ctabs" id="pt-m">
+      <div class="ctab active" onclick="setPM('course',this)">Course</div>
+      <div class="ctab" onclick="setPM('hsr',this)">HSR</div>
+      <div class="ctab" onclick="setPM('accdec',this)">AccDec</div>
+      <div class="ctab" onclick="setPM('dist',this)">Dist</div>
     </div>
-    <div class="ctabs" id="pt-group">
-      <div class="ctab active" onclick="setPGroup('ARR',this)">ARR / 3/4</div>
-      <div class="ctab" onclick="setPGroup('AV',this)">Avants</div>
-      <div class="ctab" onclick="setPGroup('7S',this)">7s</div>
+    <div class="ctabs" id="pt-g">
+      <div class="ctab active" onclick="setPG('ARR',this)">ARR / 3/4</div>
+      <div class="ctab" onclick="setPG('AV',this)">Avants</div>
+      <div class="ctab" onclick="setPG('7S',this)">7s</div>
     </div>
     <div class="legend" id="p-legend"></div>
-    <div style="position:relative;height:300px"><canvas id="chart-plan" role="img" aria-label="Plan saison"></canvas></div>
+    <div style="position:relative;height:280px"><canvas id="chart-plan" role="img" aria-label="Plan saison"></canvas></div>
   </div>
-  <div class="two-col">
-    <div class="csec"><h3>Récap ARR / 3/4</h3><table class="dtable" id="tbl-plan-arr"></table></div>
-    <div class="csec"><h3>Récap Avants</h3><table class="dtable" id="tbl-plan-av"></table></div>
+  <div class="two">
+    <div class="csec"><h3>Récap ARR / 3/4</h3><table class="dt" id="tbl-plan-arr"></table></div>
+    <div class="csec"><h3>Récap Avants</h3><table class="dt" id="tbl-plan-av"></table></div>
   </div>
 </div>
 
-<!-- CONFIG -->
+<!-- ══ CONFIG ══ -->
 <div id="page-config" class="page">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
     <h2 style="font-size:15px;font-weight:600">Configuration</h2>
-    <span style="font-size:11px;color:var(--text2)">Modifiez les cibles par séance et la structure de chaque semaine</span>
-    <button class="btn btn-g" style="margin-left:auto" onclick="saveConfig()">💾 Enregistrer config</button>
+    <button class="btn btng" style="margin-left:auto" onclick="saveConfig()">💾 Enregistrer</button>
   </div>
 
-  <!-- Cibles par séance -->
-  <div style="margin-bottom:14px">
-    <div style="font-size:13px;font-weight:600;margin-bottom:10px">Cibles par type de séance</div>
-    <div class="cfg-grid" id="cfg-sessions"></div>
+  <!-- REFERENCES 100% -->
+  <div style="font-size:13px;font-weight:600;margin-bottom:8px">
+    Références semaine 100% 
+    <span style="font-size:11px;font-weight:400;color:var(--t2);margin-left:6px">Objectif hebdomadaire à charge maximale par groupe</span>
   </div>
+  <div class="ref-grid" id="cfg-refs"></div>
 
-  <!-- Structure semaines -->
-  <div>
-    <div style="font-size:13px;font-weight:600;margin-bottom:10px">Structure des semaines</div>
-    <div id="cfg-weeks"></div>
+  <!-- REFERENCES SÉANCE TYPE -->
+  <div style="font-size:13px;font-weight:600;margin-bottom:8px;margin-top:4px">
+    Valeurs de référence par séance type
+    <span style="font-size:11px;font-weight:400;color:var(--t2);margin-left:6px">Utilisées pour l'écart séance dans Analyse</span>
   </div>
+  <div class="two" id="cfg-sessions" style="margin-bottom:16px"></div>
+
+  <!-- STRUCTURE SEMAINES -->
+  <div style="font-size:13px;font-weight:600;margin-bottom:8px">
+    Structure des semaines
+    <span style="font-size:11px;font-weight:400;color:var(--t2);margin-left:6px">Nombre de séances par type · coefficient en %</span>
+  </div>
+  <div id="cfg-weeks"></div>
 </div>
 
-<!-- GUIDE -->
+<!-- ══ GUIDE ══ -->
 <div id="page-guide" class="page">
   <div class="csec">
-    <h3>🚀 Déployer sur GitHub Pages (gratuit)</h3>
-    <div style="font-size:13px;color:var(--text2);line-height:1.8;margin-top:8px">
-      <p style="margin-bottom:12px">Ce fichier <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-family:monospace">index.html</code> est 100% autonome. Hébergement gratuit sur GitHub Pages.</p>
-      <ol style="padding-left:20px;display:flex;flex-direction:column;gap:8px">
-        <li>Créez un compte sur <strong>github.com</strong></li>
-        <li>Nouveau dépôt public, nommé par ex. <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-family:monospace">preseason-rugby</code></li>
-        <li><strong>Add file → Upload files</strong> → glissez <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-family:monospace">index.html</code> → Commit</li>
-        <li><strong>Settings → Pages → Source : branche main / root → Save</strong></li>
-        <li>URL : <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-family:monospace">https://PSEUDO.github.io/preseason-rugby/</code></li>
-      </ol>
-    </div>
+    <h3>🚀 Déployer sur GitHub Pages</h3>
+    <ol style="padding-left:18px;font-size:13px;color:var(--t2);line-height:1.9;margin-top:8px">
+      <li>Compte gratuit sur <strong>github.com</strong></li>
+      <li>Nouveau dépôt public (ex : <code style="background:var(--s2);padding:1px 5px;border-radius:3px">preseason-rugby</code>)</li>
+      <li><strong>Add file → Upload files</strong> → glisser <code style="background:var(--s2);padding:1px 5px;border-radius:3px">index.html</code> → Commit</li>
+      <li><strong>Settings → Pages → Source: main / root → Save</strong></li>
+      <li>URL : <code style="background:var(--s2);padding:1px 5px;border-radius:3px">https://PSEUDO.github.io/preseason-rugby/</code></li>
+    </ol>
   </div>
   <div class="csec">
     <h3>💾 Synchroniser entre appareils</h3>
-    <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:8px">Les données sont stockées dans le navigateur (localStorage). Pour partager entre staff : <strong>Exporter</strong> → envoyer le .json → <strong>Importer</strong> sur l'autre appareil.</p>
+    <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-top:6px">Données stockées dans le navigateur. Pour partager : <strong>Export</strong> → envoyer le .json → <strong>Import</strong> sur l'autre appareil. La config (références, structure semaines) est incluse dans l'export.</p>
   </div>
   <div class="csec">
-    <h3>📱 Ajouter à l'écran d'accueil (mobile)</h3>
-    <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:8px">Safari iOS : bouton partage → <strong>Ajouter à l'écran d'accueil</strong>. Android Chrome : menu ⋮ → <strong>Ajouter à l'écran d'accueil</strong>.</p>
+    <h3>📱 Mobile</h3>
+    <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-top:6px">Safari : partage → <strong>Ajouter à l'écran d'accueil</strong>. Android Chrome : ⋮ → <strong>Ajouter à l'écran d'accueil</strong>.</p>
   </div>
 </div>
 
-</div><!-- end main -->
+</div>
 
-<!-- CONFIRM MODAL -->
-<div class="overlay" id="modal-overlay">
+<!-- MODAL -->
+<div class="overlay" id="modal-ov">
   <div class="modal">
     <h4 id="modal-title">Confirmer</h4>
     <p id="modal-msg"></p>
     <div class="modal-btns">
       <button class="btn" onclick="closeModal()">Annuler</button>
-      <button class="btn btn-r" id="modal-confirm-btn">Supprimer</button>
+      <button class="btn btnr" id="modal-ok">Supprimer</button>
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-//  DEFAULT DATA
-// ═══════════════════════════════════════════════════════════
-const SESSION_COLORS = {
-  MODERE:'#378ADD', SKILLS:'#639922', LIGNE:'#BA7517', VOLUME:'#7F77DD',
-  VITESSE:'#D85A30', MEP:'#D4537E', MATCH:'#1D9E75', PERSO:'#888780'
-};
-const ALL_TYPES = ['MODERE','SKILLS','LIGNE','VOLUME','VITESSE','MEP','MATCH','PERSO'];
-const METRICS = ['course','hsr','accdec','dist'];
-const MLABELS = {course:'Course (m)', hsr:'HSR (m)', accdec:'AccDec', dist:'Dist (m)'};
+// ══════════════════════════════════════════════════════
+// CONSTANTES
+// ══════════════════════════════════════════════════════
+const SCOLORS={MODERE:'#378ADD',SKILLS:'#639922',LIGNE:'#BA7517',VOLUME:'#7F77DD',VITESSE:'#D85A30',MEP:'#D4537E',MATCH:'#1D9E75',PERSO:'#888780'};
+const ALL_ST=['MODERE','SKILLS','LIGNE','VOLUME','VITESSE','MEP','MATCH','PERSO'];
+const METRICS=['course','hsr','accdec','dist'];
+const ML={course:'Course (m)',hsr:'HSR (m)',accdec:'AccDec',dist:'Dist (m)'};
+const GROUPS=['ARR','AV','7S'];
 
-const DEFAULT_PLANS = {
+// ══════════════════════════════════════════════════════
+// DONNÉES PAR DÉFAUT
+// ══════════════════════════════════════════════════════
+
+// Références semaine 100% par groupe (objectif cible hebdo à pleine charge)
+const DEF_WEEK_REF={
+  ARR:{dist:19000, course:10000, accdec:420, hsr:2200},
+  AV: {dist:16000, course:7500,  accdec:280, hsr:900},
+  '7S':{dist:23000,course:12000, accdec:500, hsr:2200},
+};
+
+// Valeurs de référence par séance type (pour écart analyse)
+const DEF_SESSION_REF={
   ARR:{
-    MODERE: {course:1600,hsr:150,accdec:60, dist:4500},
-    SKILLS: {course:700, hsr:10,  accdec:23, dist:2000},
-    LIGNE:  {course:800, hsr:50,  accdec:35, dist:2200},
-    VOLUME: {course:3300,hsr:600, accdec:125,dist:9000},
-    VITESSE:{course:2500,hsr:500, accdec:100,dist:7000},
-    MEP:    {course:1100,hsr:110, accdec:35, dist:3000},
-    MATCH:  {course:3300,hsr:750, accdec:150,dist:9500},
-    PERSO:  {course:700, hsr:10,  accdec:50, dist:2000},
+    MODERE: {course:1600,hsr:150,accdec:60,dist:4500},
+    SKILLS: {course:700, hsr:10, accdec:23,dist:2000},
+    LIGNE:  {course:800, hsr:50, accdec:35,dist:2200},
+    VOLUME: {course:3300,hsr:600,accdec:125,dist:9000},
+    VITESSE:{course:2500,hsr:500,accdec:100,dist:7000},
+    MEP:    {course:1100,hsr:110,accdec:35,dist:3000},
+    MATCH:  {course:3300,hsr:750,accdec:150,dist:9500},
+    PERSO:  {course:700, hsr:10, accdec:50,dist:2000},
   },
   AV:{
-    MODERE: {course:1100,hsr:20,  accdec:40, dist:3500},
-    SKILLS: {course:250, hsr:0,   accdec:10, dist:800},
-    LIGNE:  {course:400, hsr:10,  accdec:15, dist:1200},
-    VOLUME: {course:2800,hsr:350, accdec:80, dist:7500},
-    VITESSE:{course:1800,hsr:240, accdec:70, dist:5000},
-    MEP:    {course:800, hsr:20,  accdec:22, dist:2200},
-    MATCH:  {course:1800,hsr:220, accdec:55, dist:5500},
-    PERSO:  {course:250, hsr:0,   accdec:40, dist:800},
+    MODERE: {course:1100,hsr:20, accdec:40,dist:3500},
+    SKILLS: {course:250, hsr:0,  accdec:10,dist:800},
+    LIGNE:  {course:400, hsr:10, accdec:15,dist:1200},
+    VOLUME: {course:2800,hsr:350,accdec:80,dist:7500},
+    VITESSE:{course:1800,hsr:240,accdec:70,dist:5000},
+    MEP:    {course:800, hsr:20, accdec:22,dist:2200},
+    MATCH:  {course:1800,hsr:220,accdec:55,dist:5500},
+    PERSO:  {course:250, hsr:0,  accdec:40,dist:800},
   }
 };
-DEFAULT_PLANS['7S'] = DEFAULT_PLANS.ARR;
+DEF_SESSION_REF['7S']=JSON.parse(JSON.stringify(DEF_SESSION_REF.ARR));
 
-const DEFAULT_WEEKS = [
-  {num:30,label:'S30',sublabel:'OFF SEASON',type:'normal',coeff:0.7,
-   sessions:{ARR:['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
-             AV: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
-             '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH']}},
-  {num:31,label:'S31',sublabel:'',type:'normal',coeff:0.8,
-   sessions:{ARR:['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
-             AV: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
-             '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH']}},
-  {num:32,label:'S32',sublabel:'',type:'normal',coeff:0.9,
-   sessions:{ARR:['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
-             AV: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
-             '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH']}},
-  {num:33,label:'S33',sublabel:'Charge max',type:'normal',coeff:1.0,
-   sessions:{ARR:['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE'],
-             AV: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE'],
-             '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH']}},
-  {num:34,label:'S34',sublabel:'Récup',type:'recup',coeff:0.5,
-   sessions:{ARR:['PERSO','MODERE','SKILLS'],
-             AV: ['PERSO','MODERE','SKILLS'],
-             '7S':['PERSO','SKILLS','LIGNE','VITESSE','MEP','MATCH']}},
-  {num:35,label:'S35',sublabel:'USI',type:'usi',coeff:1.0,
-   sessions:{ARR:['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
-             AV: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
-             '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH']}},
-  {num:36,label:'S36',sublabel:'Surcharge',type:'normal',coeff:1.1,
-   sessions:{ARR:['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
-             AV: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
-             '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH']}},
-  {num:37,label:'S37',sublabel:'',type:'normal',coeff:0.8,
-   sessions:{ARR:['PERSO','SKILLS','MODERE','LIGNE','VOLUME'],
-             AV: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME'],
-             '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME']}},
+// Structure des semaines : nb de séances par type, coefficient en %
+// coeff = % de la référence semaine 100%
+const DEF_WEEKS=[
+  {num:30,label:'S30',sublabel:'OFF SEASON',type:'normal',coeff:70,
+   counts:{ARR:{PERSO:1,SKILLS:2,MODERE:2,LIGNE:2,VOLUME:2,VITESSE:0,MEP:0,MATCH:0},
+           AV: {PERSO:1,SKILLS:2,MODERE:2,LIGNE:2,VOLUME:2,VITESSE:0,MEP:0,MATCH:0},
+           '7S':{PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:1,MEP:1,MATCH:1}}},
+  {num:31,label:'S31',sublabel:'',type:'normal',coeff:80,
+   counts:{ARR:{PERSO:1,SKILLS:2,MODERE:2,LIGNE:2,VOLUME:2,VITESSE:0,MEP:0,MATCH:0},
+           AV: {PERSO:1,SKILLS:2,MODERE:2,LIGNE:2,VOLUME:2,VITESSE:0,MEP:0,MATCH:0},
+           '7S':{PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:1,MEP:1,MATCH:1}}},
+  {num:32,label:'S32',sublabel:'',type:'normal',coeff:90,
+   counts:{ARR:{PERSO:1,SKILLS:2,MODERE:2,LIGNE:2,VOLUME:2,VITESSE:0,MEP:0,MATCH:0},
+           AV: {PERSO:1,SKILLS:2,MODERE:2,LIGNE:2,VOLUME:2,VITESSE:0,MEP:0,MATCH:0},
+           '7S':{PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:1,MEP:1,MATCH:1}}},
+  {num:33,label:'S33',sublabel:'Charge max',type:'normal',coeff:100,
+   counts:{ARR:{PERSO:1,SKILLS:2,MODERE:2,LIGNE:1,VOLUME:1,VITESSE:0,MEP:0,MATCH:0},
+           AV: {PERSO:1,SKILLS:2,MODERE:2,LIGNE:1,VOLUME:1,VITESSE:0,MEP:0,MATCH:0},
+           '7S':{PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:1,MEP:1,MATCH:1}}},
+  {num:34,label:'S34',sublabel:'Récup',type:'recup',coeff:50,
+   counts:{ARR:{PERSO:1,SKILLS:1,MODERE:1,LIGNE:0,VOLUME:0,VITESSE:0,MEP:0,MATCH:0},
+           AV: {PERSO:1,SKILLS:1,MODERE:1,LIGNE:0,VOLUME:0,VITESSE:0,MEP:0,MATCH:0},
+           '7S':{PERSO:1,SKILLS:1,LIGNE:1,VITESSE:1,MEP:1,MATCH:1,MODERE:0,VOLUME:0}}},
+  {num:35,label:'S35',sublabel:'USI',type:'usi',coeff:100,
+   counts:{ARR:{PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:1,MEP:1,MATCH:1},
+           AV: {PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:1,MEP:1,MATCH:1},
+           '7S':{PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:1,MEP:1,MATCH:1}}},
+  {num:36,label:'S36',sublabel:'Surcharge',type:'normal',coeff:110,
+   counts:{ARR:{PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:1,MEP:1,MATCH:1},
+           AV: {PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:1,MEP:1,MATCH:1},
+           '7S':{PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:1,MEP:1,MATCH:1}}},
+  {num:37,label:'S37',sublabel:'',type:'normal',coeff:80,
+   counts:{ARR:{PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:0,MEP:0,MATCH:0},
+           AV: {PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:0,MEP:0,MATCH:0},
+           '7S':{PERSO:1,SKILLS:1,MODERE:1,LIGNE:1,VOLUME:1,VITESSE:0,MEP:0,MATCH:0}}},
 ];
 
-// ═══════════════════════════════════════════════════════════
-//  RUNTIME CONFIG (loaded from storage or defaults)
-// ═══════════════════════════════════════════════════════════
-let CFG_PLANS = JSON.parse(JSON.stringify(DEFAULT_PLANS));
-let CFG_WEEKS = JSON.parse(JSON.stringify(DEFAULT_WEEKS));
-let DB = {};
+// ══════════════════════════════════════════════════════
+// RUNTIME — chargé depuis localStorage ou defaults
+// ══════════════════════════════════════════════════════
+let CFG_WEEK_REF=JSON.parse(JSON.stringify(DEF_WEEK_REF));
+let CFG_SESSION_REF=JSON.parse(JSON.stringify(DEF_SESSION_REF));
+let CFG_WEEKS=JSON.parse(JSON.stringify(DEF_WEEKS));
+let DB={};
 
 function loadAll(){
   try{
-    const s = JSON.parse(localStorage.getItem('presaison2627')||'{}');
-    DB        = s.db       || {};
-    CFG_PLANS = s.plans    || JSON.parse(JSON.stringify(DEFAULT_PLANS));
-    CFG_WEEKS = s.weeks    || JSON.parse(JSON.stringify(DEFAULT_WEEKS));
-  } catch(e){ DB={}; }
+    const s=JSON.parse(localStorage.getItem('prs2627')||'{}');
+    DB             = s.db          || {};
+    CFG_WEEK_REF   = s.week_ref    || JSON.parse(JSON.stringify(DEF_WEEK_REF));
+    CFG_SESSION_REF= s.session_ref || JSON.parse(JSON.stringify(DEF_SESSION_REF));
+    CFG_WEEKS      = s.weeks       || JSON.parse(JSON.stringify(DEF_WEEKS));
+    // Garantir que coeff est bien un nombre (pas un string)
+    CFG_WEEKS.forEach(w=>{ w.coeff=Number(w.coeff)||70; });
+  }catch(e){}
 }
 function saveAll(){
-  localStorage.setItem('presaison2627', JSON.stringify({db:DB, plans:CFG_PLANS, weeks:CFG_WEEKS}));
+  localStorage.setItem('prs2627',JSON.stringify({
+    db:DB, week_ref:CFG_WEEK_REF, session_ref:CFG_SESSION_REF, weeks:CFG_WEEKS
+  }));
   showToast('Sauvegardé ✓');
-}
-function saveConfig(){
-  // Read config inputs
-  ['ARR','AV'].forEach(grp=>{
-    ALL_TYPES.forEach(st=>{
-      METRICS.forEach(m=>{
-        const el = document.getElementById('cfg-'+grp+'-'+st+'-'+m);
-        if(el) CFG_PLANS[grp][st][m] = parseFloat(el.value)||0;
-      });
-    });
-  });
-  CFG_PLANS['7S'] = JSON.parse(JSON.stringify(CFG_PLANS.ARR));
-  // Read week configs
-  CFG_WEEKS.forEach((w,wi)=>{
-    const coeffEl = document.getElementById('wcfg-coeff-'+wi);
-    if(coeffEl) w.coeff = parseFloat(coeffEl.value)||1;
-  });
-  saveAll();
-  showToast('Configuration enregistrée ✓');
 }
 loadAll();
 
-// ═══════════════════════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════════════════════
-function round(v){ return Math.round(v); }
-function fmt(v){ return round(v).toLocaleString('fr-FR'); }
-function ecartHtml(real,plan){
-  if(real===null||real===undefined) return '<span style="color:var(--text3)">—</span>';
-  const e=round(real-plan);
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+const R=v=>Math.round(Number(v)||0);
+const F=v=>R(v).toLocaleString('fr-FR');
+function getKey(g,wn,si){return g+'_W'+wn+'_S'+si;}
+function getSD(g,wn,si){return DB[getKey(g,wn,si)]||{done:false,course:'',hsr:'',accdec:'',dist:''};}
+function setSD(g,wn,si,d){DB[getKey(g,wn,si)]=d;saveAll();}
+
+// Objectif hebdo = référence 100% × (coeff/100)
+function weekTarget(grp,wnum,m){
+  const w=CFG_WEEKS.find(x=>x.num===wnum);
+  if(!w) return 0;
+  const ref=CFG_WEEK_REF[grp]||CFG_WEEK_REF.ARR;
+  return R((ref[m]||0) * w.coeff / 100);
+}
+
+// Liste des séances à partir des counts
+function getSessions(w,grp){
+  const counts=w.counts[grp]||{};
+  const list=[];
+  ALL_ST.forEach(st=>{
+    const n=Number(counts[st])||0;
+    for(let i=0;i<n;i++) list.push(st);
+  });
+  return list;
+}
+
+// Réalisé total semaine pour un groupe
+function weekReal(grp,wnum){
+  const w=CFG_WEEKS.find(x=>x.num===wnum); if(!w) return null;
+  const sessions=getSessions(w,grp);
+  let tot={course:0,hsr:0,accdec:0,dist:0},any=false;
+  sessions.forEach((st,si)=>{
+    const d=getSD(grp,wnum,si);
+    if(d.done){any=true;METRICS.forEach(m=>{tot[m]+=parseFloat(d[m])||0;});}
+  });
+  return any?tot:null;
+}
+
+// Écart HTML
+function ecH(real,plan){
+  if(real===null||real===undefined) return '<span style="color:var(--t3)">—</span>';
+  const e=R(real-plan);
   const cl=e>0?'ep':e<0?'en':'ez';
   return `<span class="${cl}">${e>0?'+':''}${e.toLocaleString('fr-FR')}</span>`;
 }
-function getKey(grp,wnum,si){ return grp+'_W'+wnum+'_S'+si; }
-function getSD(grp,wnum,si){ return DB[getKey(grp,wnum,si)]||{done:false,course:'',hsr:'',accdec:'',dist:''}; }
-function setSD(grp,wnum,si,d){ DB[getKey(grp,wnum,si)]=d; saveAll(); }
 
-function calcWeekTarget(grp,wnum,m){
-  const w=CFG_WEEKS.find(x=>x.num===wnum); if(!w) return 0;
-  const plans = CFG_PLANS[grp]||CFG_PLANS.ARR;
-  return round(w.sessions[grp].reduce((s,st)=>s+(plans[st]?.[m]||0),0)*w.coeff);
-}
-function calcWeekReal(grp,wnum){
-  const w=CFG_WEEKS.find(x=>x.num===wnum); if(!w) return null;
-  let tot={course:0,hsr:0,accdec:0,dist:0}, anyDone=false;
-  w.sessions[grp].forEach((st,si)=>{
-    const d=getSD(grp,wnum,si);
-    if(d.done){ anyDone=true; METRICS.forEach(m=>{ tot[m]+=parseFloat(d[m]||0)||0; }); }
-  });
-  return anyDone?tot:null;
-}
-
-// ═══════════════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════════════
-let currentWeek=30;
-let openSessions={}; // key -> bool
-let aMetric='course', aSeasonMetric='course', pMetric='course', pGroup='ARR';
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+let curWeek=30, openS={};
+let aMetric='course', aSeasonM='course', pMetric='course', pGroup='ARR';
 let charts={};
 
-// ═══════════════════════════════════════════════════════════
-//  NAV
-// ═══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════════
 function showPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
@@ -465,460 +473,538 @@ function showPage(id,el){
   if(id==='config') renderConfigPage();
 }
 
-// ═══════════════════════════════════════════════════════════
-//  WEEK CHIPS
-// ═══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// WEEK BAR
+// ══════════════════════════════════════════════════════
 function renderWBar(id){
   const el=document.getElementById(id);
   el.innerHTML=CFG_WEEKS.map(w=>{
-    const cls=['wchip',w.type==='recup'?'recup':'',w.type==='usi'?'usi':'',w.num===currentWeek?'active':''].join(' ');
-    const sub=w.sublabel?` <small style="opacity:.65;font-size:9px">${w.sublabel}</small>`:'';
-    return `<div class="${cls}" onclick="setWeek(${w.num})">${w.label}${sub}</div>`;
+    const cls=['wchip',w.type==='recup'?'recup':'',w.type==='usi'?'usi':'',w.num===curWeek?'active':''].join(' ');
+    const sub=w.sublabel?` <small style="opacity:.6;font-size:9px">${w.sublabel}</small>`:'';
+    return `<div class="${cls}" onclick="setWeek(${w.num})">${w.label}${sub} <small style="opacity:.5">${w.coeff}%</small></div>`;
   }).join('');
 }
 function setWeek(n){
-  currentWeek=n;
+  curWeek=n;
   renderWBar('wbar-saisie');
   renderWBar('wbar-analyse');
   renderSaisiePage();
   if(document.getElementById('page-analyse').classList.contains('active')) renderAnalysePage();
 }
 
-// ═══════════════════════════════════════════════════════════
-//  SAISIE
-// ═══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// SAISIE
+// ══════════════════════════════════════════════════════
 function renderSaisiePage(){
   renderWBar('wbar-saisie');
-  const cols=document.getElementById('saisie-cols');
-  cols.innerHTML=renderGroupCol('ARR')+renderGroupCol('AV');
+  document.getElementById('saisie-cols').innerHTML=renderGrpCol('ARR')+renderGrpCol('AV');
 }
 
-function renderGroupCol(grp){
-  const w=CFG_WEEKS.find(x=>x.num===currentWeek);
-  const sessions=w.sessions[grp];
-  const plans=CFG_PLANS[grp]||CFG_PLANS.ARR;
-  const badgeCls=grp==='ARR'?'ba':grp==='AV'?'bav':'b7';
-  const grpLabel=grp==='ARR'?'3/4 · Arrières':'Avants';
+function renderGrpCol(grp){
+  const w=CFG_WEEKS.find(x=>x.num===curWeek);
+  const sessions=getSessions(w,grp);
+  const sref=CFG_SESSION_REF[grp]||CFG_SESSION_REF.ARR;
+  const badgeCls=grp==='ARR'?'ba':'bav';
+  const grpLbl=grp==='ARR'?'3/4 · Arrières':'Avants';
 
-  // KPIs
-  let realTot={course:0,hsr:0,accdec:0,dist:0}, anyDone=false;
+  // KPIs vs objectif semaine
+  let realTot={course:0,hsr:0,accdec:0,dist:0},anyDone=false;
   sessions.forEach((st,si)=>{
-    const d=getSD(grp,currentWeek,si);
-    if(d.done){ anyDone=true; METRICS.forEach(m=>{ realTot[m]+=parseFloat(d[m]||0)||0; }); }
+    const d=getSD(grp,curWeek,si);
+    if(d.done){anyDone=true;METRICS.forEach(m=>{realTot[m]+=parseFloat(d[m])||0;});}
   });
-  const kpis=['course','hsr','accdec','dist'].map(m=>{
-    const plan=calcWeekTarget(grp,currentWeek,m);
-    const real=round(realTot[m]);
+  const kpis=METRICS.map(m=>{
+    const plan=weekTarget(grp,curWeek,m);
+    const real=R(realTot[m]);
     const e=real-plan;
     const ecls=e>0?'ep':e<0?'en':'ez';
     return `<div class="kpi">
-      <div class="kpi-lbl">${m==='course'?'Course':m==='hsr'?'HSR':m==='accdec'?'AccDec':'Dist'}</div>
-      <div class="kpi-plan">${fmt(plan)}</div>
-      ${anyDone?`<div class="kpi-real">Réal : ${fmt(real)}</div><div class="kpi-ecart ${ecls}">${e>0?'+':''}${fmt(e)}</div>`:''}
+      <div class="kl">${ML[m]}</div>
+      <div class="kv">${F(plan)}</div>
+      ${anyDone?`<div class="kr">Réal : <strong>${F(real)}</strong></div>
+      <div class="ke ${ecls}">${e>0?'+':''}${F(e)}</div>`:''}
     </div>`;
   }).join('');
 
   // Sessions
   const sitems=sessions.map((stype,si)=>{
-    const d=getSD(grp,currentWeek,si);
-    const coeff=w.coeff;
-    const sp=plans[stype]||{};
-    const dotCls='dot-'+stype.toLowerCase();
-    const isOpen=openSessions[grp+'_'+currentWeek+'_'+si]||false;
-    const planSum=`C:${round((sp.course||0)*coeff)} H:${round((sp.hsr||0)*coeff)} A:${round((sp.accdec||0)*coeff)}`;
+    const d=getSD(grp,curWeek,si);
+    const sp=sref[stype]||{};
+    const isOpen=openS[grp+'_'+curWeek+'_'+si]||false;
+    const planSum=`C:${F(sp.course||0)} H:${F(sp.hsr||0)} A:${F(sp.accdec||0)}`;
+
     const inputs=METRICS.map(m=>{
-      const pv=round((sp[m]||0)*coeff);
+      const pv=F(sp[m]||0);
       const val=d[m]||'';
+      // IMPORTANT: onchange (pas oninput) pour ne pas fermer à chaque frappe
       return `<div class="ifield">
-        <label>${MLABELS[m]}</label>
+        <label>${ML[m]}</label>
         <input type="number" min="0" placeholder="Réalisé" value="${val}"
-          onchange="updateField('${grp}',${currentWeek},${si},'${m}',this.value)"
+          onchange="updateField('${grp}',${curWeek},${si},'${m}',this.value)"
           onclick="event.stopPropagation()">
-        <div class="pref">Plan : ${fmt(pv)}</div>
+        <div class="pref">Réf : ${pv}</div>
       </div>`;
     }).join('');
 
-    return `<div class="sitem${d.done?' done-item':''}" id="si-${grp}-${currentWeek}-${si}">
-      <div class="shead" onclick="toggleSess('${grp}',${currentWeek},${si})">
-        <div class="sdot" style="background:${SESSION_COLORS[stype]||'#888'}"></div>
-        <span class="slabel">${stype}</span>
+    return `<div class="sitem${d.done?' done':''}" id="si-${grp}-${curWeek}-${si}">
+      <div class="shead" onclick="toggleS('${grp}',${curWeek},${si})">
+        <div class="sdot" style="background:${SCOLORS[stype]||'#888'}"></div>
+        <span class="slbl">${stype}</span>
         <span class="splan">${planSum}</span>
-        <div class="scheck${d.done?' done':(isOpen?'':'')}">
-          ${d.done?'✓':(isOpen?'−':'+')}
-        </div>
+        <div class="sck${d.done?' done':''}">${d.done?'✓':(isOpen?'−':'+')}</div>
       </div>
       ${isOpen?`<div class="sbody">
         <div class="igrid">${inputs}</div>
-        <div class="sactions">
-          <button class="btn btn-g" style="font-size:11px" onclick="markDone('${grp}',${currentWeek},${si})">
+        <div class="sact">
+          <button class="btn btng" style="font-size:11px" onclick="markDone('${grp}',${curWeek},${si})">
             ${d.done?'✓ Enregistrée':'✓ Valider'}
           </button>
-          <button class="btn btn-r" style="font-size:11px" onclick="confirmDeleteSession('${grp}',${currentWeek},${si})">
-            🗑 Effacer
-          </button>
+          <button class="btn btnr" style="font-size:11px" onclick="confirmDel('${grp}',${curWeek},${si})">🗑 Effacer</button>
         </div>
       </div>`:''}
     </div>`;
   }).join('');
 
-  return `<div class="gcol">
-    <div class="ghead"><span class="gbadge ${badgeCls}">${grp}</span><h3>${grpLabel}</h3></div>
-    <div class="kpi-row">${kpis}</div>
+  return `<div class="card" style="overflow:visible">
+    <div class="card-h"><span class="gbadge ${badgeCls}">${grp}</span><h3>${grpLbl}</h3>
+      <span style="font-size:10px;color:var(--t2);margin-left:auto">Objectif : ${w.coeff}% de la référence</span>
+    </div>
+    <div class="krow">${kpis}</div>
     <div class="slist">${sitems}</div>
   </div>`;
 }
 
-function toggleSess(grp,wnum,si){
+function toggleS(grp,wnum,si){
   const k=grp+'_'+wnum+'_'+si;
-  openSessions[k]=!openSessions[k];
+  openS[k]=!openS[k];
   renderSaisiePage();
 }
 
 function updateField(grp,wnum,si,m,val){
   const d=getSD(grp,wnum,si);
-  d[m]=val;
-  setSD(grp,wnum,si,d);
-  // Update KPIs only (don't re-render full page = no collapse)
-  refreshKPIsOnly(grp,wnum);
+  d[m]=val; setSD(grp,wnum,si,d);
+  refreshKPIs(grp,wnum);
 }
 
-function refreshKPIsOnly(grp,wnum){
-  // Lightweight: just re-render the KPI row inside the correct column
+function refreshKPIs(grp,wnum){
   const w=CFG_WEEKS.find(x=>x.num===wnum);
-  const plans=CFG_PLANS[grp]||CFG_PLANS.ARR;
-  let realTot={course:0,hsr:0,accdec:0,dist:0}, anyDone=false;
-  w.sessions[grp].forEach((st,si)=>{
+  const sessions=getSessions(w,grp);
+  let realTot={course:0,hsr:0,accdec:0,dist:0},anyDone=false;
+  sessions.forEach((st,si)=>{
     const d=getSD(grp,wnum,si);
-    if(d.done){ anyDone=true; METRICS.forEach(m=>{ realTot[m]+=parseFloat(d[m]||0)||0; }); }
+    if(d.done){anyDone=true;METRICS.forEach(m=>{realTot[m]+=parseFloat(d[m])||0;});}
   });
-  const colEl=document.querySelector('#saisie-cols .gcol:nth-child('+(grp==='ARR'?1:2)+') .kpi-row');
-  if(!colEl) return;
-  colEl.innerHTML=['course','hsr','accdec','dist'].map(m=>{
-    const plan=calcWeekTarget(grp,wnum,m);
-    const real=round(realTot[m]);
+  const colIdx=grp==='ARR'?1:2;
+  const rowEl=document.querySelector(`#saisie-cols .card:nth-child(${colIdx}) .krow`);
+  if(!rowEl) return;
+  rowEl.innerHTML=METRICS.map(m=>{
+    const plan=weekTarget(grp,wnum,m);
+    const real=R(realTot[m]);
     const e=real-plan;
     const ecls=e>0?'ep':e<0?'en':'ez';
     return `<div class="kpi">
-      <div class="kpi-lbl">${m==='course'?'Course':m==='hsr'?'HSR':m==='accdec'?'AccDec':'Dist'}</div>
-      <div class="kpi-plan">${fmt(plan)}</div>
-      ${anyDone?`<div class="kpi-real">Réal : ${fmt(real)}</div><div class="kpi-ecart ${ecls}">${e>0?'+':''}${fmt(e)}</div>`:''}
+      <div class="kl">${ML[m]}</div>
+      <div class="kv">${F(plan)}</div>
+      ${anyDone?`<div class="kr">Réal : <strong>${F(real)}</strong></div>
+      <div class="ke ${ecls}">${e>0?'+':''}${F(e)}</div>`:''}
     </div>`;
   }).join('');
 }
 
 function markDone(grp,wnum,si){
   const d=getSD(grp,wnum,si);
-  d.done=true;
-  setSD(grp,wnum,si,d);
-  openSessions[grp+'_'+wnum+'_'+si]=false;
+  d.done=true; setSD(grp,wnum,si,d);
+  openS[grp+'_'+wnum+'_'+si]=false;
   renderSaisiePage();
   showToast('Séance validée ✓');
 }
 
-// ═══════════════════════════════════════════════════════════
-//  DELETE / RESET
-// ═══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// DELETE / RESET
+// ══════════════════════════════════════════════════════
 let pendingAction=null;
-function confirmDeleteSession(grp,wnum,si){
+function confirmDel(grp,wnum,si){
   const w=CFG_WEEKS.find(x=>x.num===wnum);
-  const stype=w.sessions[grp][si];
-  pendingAction=()=>{ deleteSession(grp,wnum,si); };
-  document.getElementById('modal-title').textContent='Supprimer cette séance ?';
-  document.getElementById('modal-msg').textContent=`Effacer les données réalisées pour la séance ${stype} (${grp}, S${wnum}) ?`;
-  document.getElementById('modal-confirm-btn').textContent='Effacer';
-  document.getElementById('modal-overlay').classList.add('show');
+  const sessions=getSessions(w,grp);
+  pendingAction=()=>delSession(grp,wnum,si);
+  showModal('Supprimer cette séance ?',`Effacer les données de la séance ${sessions[si]||si} (${grp}, S${wnum}) ?`,'Effacer');
 }
 function confirmResetWeek(){
-  pendingAction=()=>{ resetWeek(); };
-  document.getElementById('modal-title').textContent='Effacer toute la semaine ?';
-  document.getElementById('modal-msg').textContent=`Supprimer TOUTES les données saisies pour S${currentWeek} (ARR et AV) ?`;
-  document.getElementById('modal-confirm-btn').textContent='Tout effacer';
-  document.getElementById('modal-overlay').classList.add('show');
+  pendingAction=()=>resetWeek();
+  showModal('Effacer toute la semaine ?',`Supprimer toutes les données saisies pour S${curWeek} (ARR et AV) ?`,'Tout effacer');
 }
-function closeModal(){ document.getElementById('modal-overlay').classList.remove('show'); pendingAction=null; }
-document.getElementById('modal-confirm-btn').onclick=function(){
-  closeModal();
-  if(pendingAction){ pendingAction(); pendingAction=null; }
-};
-function deleteSession(grp,wnum,si){
+function showModal(title,msg,btnTxt){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-msg').textContent=msg;
+  document.getElementById('modal-ok').textContent=btnTxt;
+  document.getElementById('modal-ov').classList.add('show');
+}
+function closeModal(){document.getElementById('modal-ov').classList.remove('show');pendingAction=null;}
+document.getElementById('modal-ok').onclick=function(){closeModal();if(pendingAction){pendingAction();pendingAction=null;}};
+
+function delSession(grp,wnum,si){
   delete DB[getKey(grp,wnum,si)];
-  openSessions[grp+'_'+wnum+'_'+si]=false;
-  saveAll();
-  renderSaisiePage();
-  showToast('Séance effacée');
+  openS[grp+'_'+wnum+'_'+si]=false;
+  saveAll(); renderSaisiePage(); showToast('Séance effacée');
 }
 function resetWeek(){
-  const w=CFG_WEEKS.find(x=>x.num===currentWeek);
+  CFG_WEEKS.forEach(()=>{});
+  const w=CFG_WEEKS.find(x=>x.num===curWeek);
   ['ARR','AV','7S'].forEach(grp=>{
-    (w.sessions[grp]||[]).forEach((_,si)=>{ delete DB[getKey(grp,currentWeek,si)]; });
+    getSessions(w,grp).forEach((_,si)=>{ delete DB[getKey(grp,curWeek,si)]; });
   });
-  saveAll();
-  renderSaisiePage();
-  showToast('Semaine effacée');
+  saveAll(); renderSaisiePage(); showToast('Semaine effacée');
 }
 
-// ═══════════════════════════════════════════════════════════
-//  ANALYSE
-// ═══════════════════════════════════════════════════════════
-function setAMetric(m,el){ aMetric=m; document.querySelectorAll('#at-metric .ctab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); renderAnalysePage(); }
-function setASeason(m,el){ aSeasonMetric=m; document.querySelectorAll('#at-season .ctab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); renderSeasonChart(); }
+// ══════════════════════════════════════════════════════
+// ANALYSE
+// ══════════════════════════════════════════════════════
+function setAM(m,el){aMetric=m;document.querySelectorAll('#at-m .ctab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderContrib();}
+function setAS(m,el){aSeasonM=m;document.querySelectorAll('#at-s .ctab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderSeason();}
+function renderAnalysePage(){renderWBar('wbar-analyse');renderContrib();renderSeason();renderDetailTbl('ARR','tbl-arr');renderDetailTbl('AV','tbl-av');}
 
-function renderAnalysePage(){
-  renderWBar('wbar-analyse');
-  renderContribChart();
-  renderSeasonChart();
-  renderDetailTable('ARR','tbl-arr');
-  renderDetailTable('AV','tbl-av');
-}
+function destroyC(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 
-function destroyChart(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
-
-function renderContribChart(){
-  const w=CFG_WEEKS.find(x=>x.num===currentWeek);
+function renderContrib(){
+  const w=CFG_WEEKS.find(x=>x.num===curWeek);
   const m=aMetric;
-  const groups=['ARR','AV'];
-  const allTypes=[...new Set([...w.sessions.ARR,...w.sessions.AV])];
+  const grps=['ARR','AV'];
+  const allTypes=[...new Set([...getSessions(w,'ARR'),...getSessions(w,'AV')])];
   const labels=['ARR Plan','ARR Réalisé','AV Plan','AV Réalisé'];
 
-  const datasets=ALL_TYPES.filter(st=>allTypes.includes(st)).map(stype=>{
-    const data=groups.flatMap(grp=>{
-      const plans=CFG_PLANS[grp]||CFG_PLANS.ARR;
-      const coeff=w.coeff;
-      const sessions=w.sessions[grp];
-      const planVal=sessions.filter(s=>s===stype).length*round((plans[stype]?.[m]||0)*coeff);
+  const datasets=ALL_ST.filter(st=>allTypes.includes(st)).map(stype=>{
+    const data=grps.flatMap(grp=>{
+      const sref=CFG_SESSION_REF[grp]||CFG_SESSION_REF.ARR;
+      const sessions=getSessions(w,grp);
+      const planVal=sessions.filter(s=>s===stype).length*(sref[stype]?.[m]||0);
       const realVal=sessions.reduce((sum,s,si)=>{
         if(s!==stype) return sum;
-        const d=getSD(grp,currentWeek,si);
-        return sum+(d.done?(parseFloat(d[m]||0)||0):0);
+        const d=getSD(grp,curWeek,si);
+        return sum+(d.done?(parseFloat(d[m])||0):0);
       },0);
-      return[planVal,round(realVal)];
+      return[R(planVal),R(realVal)];
     });
-    return{label:stype,data,backgroundColor:SESSION_COLORS[stype]+'cc',borderWidth:0};
+    return{label:stype,data,backgroundColor:SCOLORS[stype]+'cc',borderWidth:0};
   });
 
-  document.getElementById('a-legend').innerHTML=ALL_TYPES.filter(st=>allTypes.includes(st)).map(st=>
-    `<div class="li"><div class="ldot" style="background:${SESSION_COLORS[st]}"></div>${st}</div>`).join('');
+  document.getElementById('a-legend').innerHTML=ALL_ST.filter(st=>allTypes.includes(st)).map(st=>
+    `<div class="li"><div class="ldot" style="background:${SCOLORS[st]}"></div>${st}</div>`).join('');
 
-  destroyChart('contrib');
-  const ctx=document.getElementById('chart-contrib').getContext('2d');
-  charts['contrib']=new Chart(ctx,{type:'bar',data:{labels,datasets},options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${round(c.raw).toLocaleString('fr-FR')}`}}},
-    scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:v=>v.toLocaleString('fr-FR')}}}
-  }});
+  destroyC('contrib');
+  charts['contrib']=new Chart(document.getElementById('chart-contrib').getContext('2d'),{
+    type:'bar',data:{labels,datasets},options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${R(c.raw).toLocaleString('fr-FR')}`}}},
+      scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:v=>v.toLocaleString('fr-FR')}}}
+    }
+  });
 }
 
-function renderSeasonChart(){
-  const m=aSeasonMetric;
-  const weekLabels=CFG_WEEKS.map(w=>w.label);
-  const planARR=CFG_WEEKS.map(w=>calcWeekTarget('ARR',w.num,m));
-  const planAV=CFG_WEEKS.map(w=>calcWeekTarget('AV',w.num,m));
-  const realARR=CFG_WEEKS.map(w=>{ const r=calcWeekReal('ARR',w.num); return r?round(r[m]):null; });
-  const realAV=CFG_WEEKS.map(w=>{ const r=calcWeekReal('AV',w.num); return r?round(r[m]):null; });
+function renderSeason(){
+  const m=aSeasonM;
+  const labels=CFG_WEEKS.map(w=>w.label);
+  // Objectif = référence 100% × coeff/100
+  const tARR=CFG_WEEKS.map(w=>weekTarget('ARR',w.num,m));
+  const tAV =CFG_WEEKS.map(w=>weekTarget('AV', w.num,m));
+  const rARR=CFG_WEEKS.map(w=>{const r=weekReal('ARR',w.num);return r?R(r[m]):null;});
+  const rAV =CFG_WEEKS.map(w=>{const r=weekReal('AV', w.num);return r?R(r[m]):null;});
 
-  destroyChart('season');
-  const ctx=document.getElementById('chart-season').getContext('2d');
-  charts['season']=new Chart(ctx,{type:'line',data:{labels:weekLabels,datasets:[
-    {label:'ARR Plan',data:planARR,borderColor:'#378ADD',backgroundColor:'#378ADD22',tension:.3,borderDash:[5,3],pointRadius:4,fill:false},
-    {label:'ARR Réalisé',data:realARR,borderColor:'#378ADD',backgroundColor:'#378ADD',tension:.3,pointRadius:6,fill:false,spanGaps:false},
-    {label:'AV Plan',data:planAV,borderColor:'#7F77DD',backgroundColor:'#7F77DD22',tension:.3,borderDash:[5,3],pointRadius:4,fill:false},
-    {label:'AV Réalisé',data:realAV,borderColor:'#7F77DD',backgroundColor:'#7F77DD',tension:.3,pointRadius:6,fill:false,spanGaps:false},
-  ]},options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.raw!==null?round(c.raw).toLocaleString('fr-FR'):'—'}`}}},
-    scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v.toLocaleString('fr-FR')}}}
-  }});
+  destroyC('season');
+  charts['season']=new Chart(document.getElementById('chart-season').getContext('2d'),{
+    type:'line',data:{labels,datasets:[
+      {label:'ARR Objectif',data:tARR,borderColor:'#378ADD',borderDash:[5,3],tension:.3,pointRadius:4,fill:false,borderWidth:2},
+      {label:'ARR Réalisé', data:rARR,borderColor:'#378ADD',tension:.3,pointRadius:6,fill:false,borderWidth:2.5,spanGaps:false},
+      {label:'AV Objectif', data:tAV, borderColor:'#7F77DD',borderDash:[5,3],tension:.3,pointRadius:4,fill:false,borderWidth:2},
+      {label:'AV Réalisé',  data:rAV, borderColor:'#7F77DD',tension:.3,pointRadius:6,fill:false,borderWidth:2.5,spanGaps:false},
+    ]},options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}},
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.raw!==null?R(c.raw).toLocaleString('fr-FR'):'—'}`}}},
+      scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v.toLocaleString('fr-FR')}}}
+    }
+  });
 }
 
-function renderDetailTable(grp,tid){
-  const w=CFG_WEEKS.find(x=>x.num===currentWeek);
-  const coeff=w.coeff;
-  const plans=CFG_PLANS[grp]||CFG_PLANS.ARR;
-  const rows=w.sessions[grp].map((stype,si)=>{
-    const d=getSD(grp,currentWeek,si);
-    const sp=plans[stype]||{};
+function renderDetailTbl(grp,tid){
+  const w=CFG_WEEKS.find(x=>x.num===curWeek);
+  const sref=CFG_SESSION_REF[grp]||CFG_SESSION_REF.ARR;
+  const sessions=getSessions(w,grp);
+  const rows=sessions.map((stype,si)=>{
+    const d=getSD(grp,curWeek,si);
+    const sp=sref[stype]||{};
     return METRICS.map((m,mi)=>{
-      const plan=round((sp[m]||0)*coeff);
-      const real=d.done?(parseFloat(d[m]||0)||0):null;
-      const e=real!==null?round(real-plan):null;
+      // Écart Analyse = réalisé vs référence de la séance type (pas coefficient)
+      const ref=R(sp[m]||0);
+      const real=d.done?(parseFloat(d[m])||0):null;
+      const e=real!==null?R(real-ref):null;
       const ecls=e===null?'':(e>=0?'ep':'en');
       return `<tr>
-        ${mi===0?`<td rowspan="4" style="font-weight:500;vertical-align:middle;border-right:1px solid var(--border);padding-right:8px">
-          <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${SESSION_COLORS[stype]||'#888'};margin-right:5px"></span>${stype}
-          ${d.done?`<button class="btn btn-r" style="font-size:9px;padding:2px 6px;margin-top:4px;display:block" onclick="confirmDeleteSession('${grp}',${currentWeek},${si})">🗑</button>`:''}
+        ${mi===0?`<td rowspan="4" style="font-weight:500;vertical-align:middle;border-right:1px solid var(--border)">
+          <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${SCOLORS[stype]||'#888'};margin-right:4px"></span>${stype}
+          ${d.done?`<div style="margin-top:4px"><button class="btn btnr" style="font-size:9px;padding:2px 5px" onclick="confirmDel('${grp}',${curWeek},${si})">🗑</button></div>`:''}
         </td>`:''}
-        <td style="color:var(--text2)">${MLABELS[m]}</td>
-        <td>${fmt(plan)}</td>
-        <td>${real!==null?fmt(real):'—'}</td>
+        <td style="color:var(--t2)">${ML[m]}</td>
+        <td>${F(ref)} <span style="color:var(--t3);font-size:9px">réf</span></td>
+        <td>${real!==null?F(real):'—'}</td>
         <td class="${ecls}">${e!==null?(e>0?'+':'')+e.toLocaleString('fr-FR'):'—'}</td>
       </tr>`;
     }).join('');
   }).join('');
   document.getElementById(tid).innerHTML=`
-    <thead><tr><th>Séance</th><th>Métrique</th><th>Plan</th><th>Réalisé</th><th>Écart</th></tr></thead>
+    <thead><tr><th>Séance</th><th>Métrique</th><th>Référence</th><th>Réalisé</th><th>Écart</th></tr></thead>
     <tbody>${rows}</tbody>`;
 }
 
-// ═══════════════════════════════════════════════════════════
-//  PLAN
-// ═══════════════════════════════════════════════════════════
-function setPMetric(m,el){ pMetric=m; document.querySelectorAll('#pt-metric .ctab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); renderPlanPage(); }
-function setPGroup(g,el){ pGroup=g; document.querySelectorAll('#pt-group .ctab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); renderPlanChart(); }
-
-function renderPlanPage(){ renderPlanChart(); renderPlanTable('ARR','tbl-plan-arr'); renderPlanTable('AV','tbl-plan-av'); }
+// ══════════════════════════════════════════════════════
+// PLAN
+// ══════════════════════════════════════════════════════
+function setPM(m,el){pMetric=m;document.querySelectorAll('#pt-m .ctab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderPlanPage();}
+function setPG(g,el){pGroup=g;document.querySelectorAll('#pt-g .ctab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderPlanChart();}
+function renderPlanPage(){renderPlanChart();renderPlanTbl('ARR','tbl-plan-arr');renderPlanTbl('AV','tbl-plan-av');}
 
 function renderPlanChart(){
-  const m=pMetric; const grp=pGroup;
-  const plans=CFG_PLANS[grp]||CFG_PLANS.ARR;
-  const allTypes=[...new Set(CFG_WEEKS.flatMap(w=>w.sessions[grp]||[]))];
+  const m=pMetric,grp=pGroup;
+  const sref=CFG_SESSION_REF[grp]||CFG_SESSION_REF.ARR;
   const labels=CFG_WEEKS.map(w=>w.label);
-  const datasets=ALL_TYPES.filter(st=>allTypes.includes(st)).map(stype=>{
+  const allTypes=[...new Set(CFG_WEEKS.flatMap(w=>getSessions(w,grp)))];
+
+  const datasets=ALL_ST.filter(st=>allTypes.includes(st)).map(stype=>{
     const data=CFG_WEEKS.map(w=>{
-      const count=(w.sessions[grp]||[]).filter(s=>s===stype).length;
-      return round(count*(plans[stype]?.[m]||0)*w.coeff);
+      // Contribution de ce type de séance à l'objectif semaine
+      // On répartit l'objectif au prorata du nb de séances de ce type
+      const sessions=getSessions(w,grp);
+      const total=sessions.length||1;
+      const countStype=sessions.filter(s=>s===stype).length;
+      // Contribution = objectif × (nb séances type / total séances)
+      // Mais on affiche directement nb×référence_séance pour montrer la structure
+      return R(countStype*(sref[stype]?.[m]||0)*w.coeff/100);
     });
-    return{label:stype,data,backgroundColor:SESSION_COLORS[stype]+'cc',borderWidth:0};
+    return{label:stype,data,backgroundColor:SCOLORS[stype]+'cc',borderWidth:0};
   });
-  document.getElementById('p-legend').innerHTML=ALL_TYPES.filter(st=>allTypes.includes(st)).map(st=>
-    `<div class="li"><div class="ldot" style="background:${SESSION_COLORS[st]}"></div>${st}</div>`).join('');
-  destroyChart('plan');
-  const ctx=document.getElementById('chart-plan').getContext('2d');
-  charts['plan']=new Chart(ctx,{type:'bar',data:{labels,datasets},options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${round(c.raw).toLocaleString('fr-FR')}`}}},
-    scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:v=>v.toLocaleString('fr-FR')}}}
-  }});
+
+  // Ajouter ligne objectif
+  const objData=CFG_WEEKS.map(w=>weekTarget(grp,w.num,m));
+  // Ajouter réalisé
+  const realData=CFG_WEEKS.map(w=>{const r=weekReal(grp,w.num);return r?R(r[m]):null;});
+
+  document.getElementById('p-legend').innerHTML=ALL_ST.filter(st=>allTypes.includes(st)).map(st=>
+    `<div class="li"><div class="ldot" style="background:${SCOLORS[st]}"></div>${st}</div>`
+  ).join('')+`<div class="li"><div class="ldot" style="background:#1a1a18;border-radius:50%"></div>Objectif</div>`
+  +`<div class="li"><div class="ldot" style="background:#E24B4A;border-radius:50%"></div>Réalisé</div>`;
+
+  destroyC('plan');
+  charts['plan']=new Chart(document.getElementById('chart-plan').getContext('2d'),{
+    type:'bar',
+    data:{labels,datasets:[
+      ...datasets,
+      {label:'Objectif',data:objData,type:'line',borderColor:'#1a1a18',borderWidth:2.5,borderDash:[4,3],pointRadius:5,fill:false,order:0},
+      {label:'Réalisé', data:realData,type:'line',borderColor:'#E24B4A',borderWidth:2.5,pointRadius:6,fill:false,order:0,spanGaps:false},
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.raw!==null?R(c.raw).toLocaleString('fr-FR'):'—'}`}}},
+      scales:{x:{stacked:true,grid:{display:false}},y:{stacked:false,ticks:{callback:v=>v.toLocaleString('fr-FR')}}}
+    }
+  });
 }
 
-function renderPlanTable(grp,tid){
+function renderPlanTbl(grp,tid){
   const rows=CFG_WEEKS.map(w=>{
-    const isCurrent=w.num===currentWeek;
-    const style=isCurrent?'background:var(--green-l)':'';
-    const cibles=METRICS.map(m=>`<td>${fmt(calcWeekTarget(grp,w.num,m))}</td>`).join('');
-    return `<tr style="${style}"><td style="font-weight:${isCurrent?600:400}">${w.label}${w.sublabel?' <small style="color:var(--text3)">'+w.sublabel+'</small>':''}</td>
-      <td>${round(w.coeff*100)}%</td>${cibles}</tr>`;
+    const obj=METRICS.map(m=>weekTarget(grp,w.num,m));
+    const real=weekReal(grp,w.num);
+    const isCur=w.num===curWeek;
+    const cells=METRICS.map((m,i)=>{
+      const rv=real?R(real[m]):null;
+      const e=rv!==null?R(rv-obj[i]):null;
+      const ecls=e===null?'':(e>=0?'ep':'en');
+      return `<td>${F(obj[i])}</td><td>${rv!==null?F(rv):'—'}</td><td class="${ecls}">${e!==null?(e>0?'+':'')+e.toLocaleString('fr-FR'):'—'}</td>`;
+    }).join('');
+    return `<tr style="${isCur?'background:var(--gl)':''}">
+      <td style="font-weight:${isCur?600:400}">${w.label}${w.sublabel?` <small style="color:var(--t3)">${w.sublabel}</small>`:''}</td>
+      <td style="font-weight:600;color:var(--green)">${w.coeff}%</td>
+      ${cells}
+    </tr>`;
   }).join('');
   document.getElementById(tid).innerHTML=`
-    <thead><tr><th>Sem.</th><th>%</th><th>Course</th><th>HSR</th><th>AccDec</th><th>Dist</th></tr></thead>
-    <tbody>${rows}</tbody>`;
+    <thead><tr>
+      <th>Sem.</th><th>Coeff</th>
+      ${METRICS.map(m=>`<th>${m==='course'?'C':m==='hsr'?'H':m==='accdec'?'A':'D'} obj</th><th>Réal</th><th>Éc.</th>`).join('')}
+    </tr></thead><tbody>${rows}</tbody>`;
 }
 
-// ═══════════════════════════════════════════════════════════
-//  CONFIG PAGE
-// ═══════════════════════════════════════════════════════════
-function renderConfigPage(){
-  renderCfgSessions();
-  renderCfgWeeks();
+// ══════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════
+function renderConfigPage(){renderCfgRefs();renderCfgSessions();renderCfgWeeks();}
+
+function renderCfgRefs(){
+  document.getElementById('cfg-refs').innerHTML=GROUPS.map(grp=>{
+    const ref=CFG_WEEK_REF[grp]||{};
+    const badgeCls=grp==='ARR'?'ba':grp==='AV'?'bav':'b7';
+    const rows=METRICS.map(m=>`<div class="ref-row">
+      <label>${ML[m]}</label>
+      <input type="number" min="0" id="wref-${grp}-${m}" value="${ref[m]||0}">
+    </div>`).join('');
+    return `<div class="ref-card">
+      <div class="ref-h"><span class="gbadge ${badgeCls}">${grp}</span><span style="font-size:12px;font-weight:500">Référence 100%</span></div>
+      <div class="ref-b">${rows}</div>
+    </div>`;
+  }).join('');
 }
 
 function renderCfgSessions(){
-  const container=document.getElementById('cfg-sessions');
-  container.innerHTML=['ARR','AV'].map(grp=>{
-    const plans=CFG_PLANS[grp]||CFG_PLANS.ARR;
+  document.getElementById('cfg-sessions').innerHTML=['ARR','AV'].map(grp=>{
+    const sref=CFG_SESSION_REF[grp]||{};
     const badgeCls=grp==='ARR'?'ba':'bav';
-    const hdr=`<div class="cfg-hdr"><span></span>${METRICS.map(m=>`<span>${m==='course'?'Course':m==='hsr'?'HSR':m==='accdec'?'AccDec':'Dist'}</span>`).join('')}</div>`;
-    const rows=ALL_TYPES.map(st=>{
-      const sp=plans[st]||{};
-      const inputs=METRICS.map(m=>`<input type="number" min="0" id="cfg-${grp}-${st}-${m}" value="${sp[m]||0}">`).join('');
+    const hdrCols=METRICS.map(m=>`<span style="font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);text-align:center">${m==='course'?'Course':m==='hsr'?'HSR':m==='accdec'?'AccDec':'Dist'}</span>`).join('');
+    const rows=ALL_ST.map(st=>{
+      const sp=sref[st]||{};
+      const inputs=METRICS.map(m=>`<input type="number" min="0" id="sref-${grp}-${st}-${m}" value="${sp[m]||0}">`).join('');
       return `<div class="cfg-row">
-        <div class="cfg-stype"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${SESSION_COLORS[st]};margin-right:4px"></span>${st}</div>
-        <div class="cfg-inputs">${inputs}</div>
+        <div class="cfg-lbl"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${SCOLORS[st]};margin-right:4px"></span>${st}</div>
+        <div class="cfg-inputs" style="grid-template-columns:repeat(4,1fr)">${inputs}</div>
       </div>`;
     }).join('');
-    return `<div class="cfg-card">
-      <div class="cfg-head"><h3><span class="gbadge ${badgeCls}">${grp}</span> Cibles par séance</h3></div>
-      <div class="cfg-body">${hdr}${rows}</div>
+    return `<div class="card">
+      <div class="card-h"><span class="gbadge ${badgeCls}">${grp}</span><h3>Références par séance type</h3></div>
+      <div class="card-b">
+        <div style="display:grid;grid-template-columns:72px repeat(4,1fr);gap:6px;padding-bottom:4px;margin-bottom:2px">${'<span></span>'}${hdrCols}</div>
+        ${rows}
+      </div>
     </div>`;
   }).join('');
 }
 
 function renderCfgWeeks(){
-  const container=document.getElementById('cfg-weeks');
-  container.innerHTML=CFG_WEEKS.map((w,wi)=>{
-    const typeChips=ALL_TYPES.map(st=>{
-      const isInARR=w.sessions.ARR.includes(st);
-      const isInAV=w.sessions.AV.includes(st);
-      return `<div style="display:flex;flex-direction:column;gap:2px">
-        <span style="font-size:9px;color:var(--text3)">${st}</span>
-        <div style="display:flex;gap:3px">
-          <span class="sess-chip${isInARR?' sel':''}" style="${isInARR?'background:'+SESSION_COLORS[st]+';border-color:'+SESSION_COLORS[st]:''}" onclick="toggleWSession(${wi},'ARR','${st}',this)">ARR</span>
-          <span class="sess-chip${isInAV?' sel':''}" style="${isInAV?'background:'+SESSION_COLORS[st]+';border-color:'+SESSION_COLORS[st]:''}" onclick="toggleWSession(${wi},'AV','${st}',this)">AV</span>
-        </div>
-      </div>`;
+  document.getElementById('cfg-weeks').innerHTML=CFG_WEEKS.map((w,wi)=>{
+    const coeffVal=Number(w.coeff)||70;
+    const grpRows=['ARR','AV','7S'].map(grp=>{
+      const counts=w.counts[grp]||{};
+      const cells=ALL_ST.map(st=>{
+        const n=Number(counts[st])||0;
+        return `<td>
+          <div style="display:flex;align-items:center;justify-content:center;gap:3px">
+            <button class="num-btn" onclick="adjCount(${wi},'${grp}','${st}',-1)">−</button>
+            <span class="num-val" id="nc-${wi}-${grp}-${st}">${n}</span>
+            <button class="num-btn" onclick="adjCount(${wi},'${grp}','${st}',1)">+</button>
+          </div>
+        </td>`;
+      }).join('');
+      const badgeCls=grp==='ARR'?'ba':grp==='AV'?'bav':'b7';
+      return `<tr>
+        <td><span class="gbadge ${badgeCls}" style="font-size:9px">${grp}</span></td>
+        ${cells}
+      </tr>`;
     }).join('');
-    return `<div class="wcfg-card">
-      <div class="wcfg-head">
+    const stHeaders=ALL_ST.map(st=>`<th><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${SCOLORS[st]};margin-bottom:2px"></span><br>${st}</th>`).join('');
+    return `<div class="wcfg">
+      <div class="wcfg-h">
         <span class="wchip ${w.type==='recup'?'recup':''} ${w.type==='usi'?'usi':''}" style="cursor:default">${w.label}</span>
-        ${w.sublabel?`<span style="font-size:11px;color:var(--text2)">${w.sublabel}</span>`:''}
-        <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-          <label style="font-size:11px;color:var(--text2)">Coefficient (%)</label>
-          <input type="number" min="0" max="200" step="5" id="wcfg-coeff-${wi}" value="${round(w.coeff*100)}"
-            style="padding:4px 7px;border:1px solid var(--border);border-radius:var(--rs);font-size:12px;width:72px;background:var(--surface);color:var(--text)">
+        ${w.sublabel?`<span style="font-size:11px;color:var(--t2)">${w.sublabel}</span>`:''}
+        <div class="coeff-box">
+          <label>Coefficient (%)</label>
+          <input type="number" min="0" max="200" step="5" id="wcfg-${wi}"
+            value="${coeffVal}"
+            onchange="updateCoeff(${wi},this.value)"
+            onclick="event.stopPropagation()">
         </div>
       </div>
-      <div class="wcfg-body">
-        <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Séances incluses :</div>
-        <div style="display:flex;flex-wrap:wrap;gap:10px">${typeChips}</div>
+      <div class="wcfg-b">
+        <table class="sess-table">
+          <thead><tr><th>Groupe</th>${stHeaders}</tr></thead>
+          <tbody>${grpRows}</tbody>
+        </table>
       </div>
     </div>`;
   }).join('');
 }
 
-function toggleWSession(wi,grp,stype,el){
-  const w=CFG_WEEKS[wi];
-  const idx=w.sessions[grp].indexOf(stype);
-  if(idx>=0){
-    w.sessions[grp].splice(idx,1);
-    el.classList.remove('sel');
-    el.style.background='';
-    el.style.borderColor='';
-  } else {
-    w.sessions[grp].push(stype);
-    el.classList.add('sel');
-    el.style.background=SESSION_COLORS[stype];
-    el.style.borderColor=SESSION_COLORS[stype];
-    el.style.color='#fff';
-  }
+function updateCoeff(wi,val){
+  // Stocker UNIQUEMENT le nombre (pas × 100)
+  const n=parseFloat(val);
+  if(!isNaN(n)) CFG_WEEKS[wi].coeff=n;
 }
 
-// ═══════════════════════════════════════════════════════════
-//  EXPORT / IMPORT
-// ═══════════════════════════════════════════════════════════
+function adjCount(wi,grp,stype,delta){
+  if(!CFG_WEEKS[wi].counts[grp]) CFG_WEEKS[wi].counts[grp]={};
+  const cur=Number(CFG_WEEKS[wi].counts[grp][stype])||0;
+  const nv=Math.max(0,cur+delta);
+  CFG_WEEKS[wi].counts[grp][stype]=nv;
+  const el=document.getElementById(`nc-${wi}-${grp}-${stype}`);
+  if(el) el.textContent=nv;
+}
+
+function saveConfig(){
+  // Références semaine 100%
+  GROUPS.forEach(grp=>{
+    if(!CFG_WEEK_REF[grp]) CFG_WEEK_REF[grp]={};
+    METRICS.forEach(m=>{
+      const el=document.getElementById('wref-'+grp+'-'+m);
+      if(el) CFG_WEEK_REF[grp][m]=parseFloat(el.value)||0;
+    });
+  });
+  // Références séance type
+  ['ARR','AV'].forEach(grp=>{
+    if(!CFG_SESSION_REF[grp]) CFG_SESSION_REF[grp]={};
+    ALL_ST.forEach(st=>{
+      if(!CFG_SESSION_REF[grp][st]) CFG_SESSION_REF[grp][st]={};
+      METRICS.forEach(m=>{
+        const el=document.getElementById('sref-'+grp+'-'+st+'-'+m);
+        if(el) CFG_SESSION_REF[grp][st][m]=parseFloat(el.value)||0;
+      });
+    });
+  });
+  CFG_SESSION_REF['7S']=JSON.parse(JSON.stringify(CFG_SESSION_REF.ARR));
+  // Coefficients (déjà mis à jour via onchange)
+  CFG_WEEKS.forEach((w,wi)=>{
+    const el=document.getElementById('wcfg-'+wi);
+    if(el) w.coeff=parseFloat(el.value)||70;
+  });
+  saveAll();
+  showToast('Configuration enregistrée ✓');
+}
+
+// ══════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ══════════════════════════════════════════════════════
 function exportData(){
-  const blob=new Blob([JSON.stringify({db:DB,plans:CFG_PLANS,weeks:CFG_WEEKS},null,2)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify({db:DB,week_ref:CFG_WEEK_REF,session_ref:CFG_SESSION_REF,weeks:CFG_WEEKS},null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='presaison2627_'+new Date().toISOString().slice(0,10)+'.json';
+  a.download='prs2627_'+new Date().toISOString().slice(0,10)+'.json';
   a.click();
   showToast('Export téléchargé ✓');
 }
-function triggerImport(){ document.getElementById('import-file').click(); }
+function triggerImport(){document.getElementById('import-file').click();}
 function importData(e){
-  const file=e.target.files[0]; if(!file) return;
+  const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=ev=>{
     try{
       const s=JSON.parse(ev.target.result);
-      DB=s.db||{}; CFG_PLANS=s.plans||JSON.parse(JSON.stringify(DEFAULT_PLANS));
-      CFG_WEEKS=s.weeks||JSON.parse(JSON.stringify(DEFAULT_WEEKS));
-      saveAll(); renderSaisiePage(); showToast('Données importées ✓');
-    } catch(err){ alert('Fichier invalide'); }
+      DB=s.db||{};
+      CFG_WEEK_REF=s.week_ref||JSON.parse(JSON.stringify(DEF_WEEK_REF));
+      CFG_SESSION_REF=s.session_ref||JSON.parse(JSON.stringify(DEF_SESSION_REF));
+      CFG_WEEKS=s.weeks||JSON.parse(JSON.stringify(DEF_WEEKS));
+      CFG_WEEKS.forEach(w=>{w.coeff=Number(w.coeff)||70;});
+      saveAll();renderSaisiePage();showToast('Données importées ✓');
+    }catch(err){alert('Fichier invalide');}
   };
   reader.readAsText(file);
 }
 
-// ═══════════════════════════════════════════════════════════
-//  TOAST
-// ═══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════
 function showToast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
+  t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-// ═══════════════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
 renderWBar('wbar-saisie');
 renderWBar('wbar-analyse');
 renderSaisiePage();
