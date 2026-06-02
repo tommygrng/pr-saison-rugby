@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pré-Saison 2026-27 — Suivi Charge</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --surface2: #f2f1ee;
+    --border: #e0dfd9;
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #9e9e99;
+    --green: #1D9E75;
+    --green-light: #e1f5ee;
+    --red: #E24B4A;
+    --red-light: #fcebeb;
+    --blue: #378ADD;
+    --blue-light: #e6f1fb;
+    --amber: #BA7517;
+    --amber-light: #faeeda;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+
+  /* HEADER */
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
+  header h1 { font-size: 16px; font-weight: 600; color: var(--text); }
+  header span { font-size: 12px; color: var(--text2); background: var(--surface2); padding: 3px 10px; border-radius: 20px; }
+  .header-actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn { padding: 7px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text); transition: all .15s; }
+  .btn:hover { background: var(--surface2); }
+  .btn-primary { background: var(--green); color: #fff; border-color: var(--green); }
+  .btn-primary:hover { background: #0F6E56; }
+
+  /* NAV TABS */
+  .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; gap: 0; }
+  .nav-tab { padding: 12px 20px; font-size: 13px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; color: var(--text2); transition: all .15s; }
+  .nav-tab.active { border-bottom-color: var(--green); color: var(--green); }
+  .nav-tab:hover:not(.active) { color: var(--text); }
+
+  /* LAYOUT */
+  .main { padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* WEEK SELECTOR */
+  .week-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .week-chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text2); transition: all .15s; }
+  .week-chip.active { background: var(--green); color: #fff; border-color: var(--green); }
+  .week-chip.recup { border-style: dashed; }
+  .week-chip.usi { border-color: var(--blue); color: var(--blue); }
+  .week-chip.usi.active { background: var(--blue); color: #fff; }
+
+  /* TWO COLUMNS */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* GROUP COLUMN */
+  .group-col { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .group-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .group-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: .05em; }
+  .badge-arr { background: #e6f1fb; color: #185FA5; }
+  .badge-av  { background: #EEEDFE; color: #3C3489; }
+  .badge-7s  { background: #E1F5EE; color: #085041; }
+  .group-header h3 { font-size: 14px; font-weight: 600; }
+  .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
+  .kpi { background: var(--surface2); padding: 10px 14px; }
+  .kpi-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+  .kpi-plan { font-size: 18px; font-weight: 600; color: var(--text); }
+  .kpi-real { font-size: 11px; margin-top: 2px; }
+  .kpi-ecart { font-size: 11px; font-weight: 600; margin-top: 1px; }
+  .ecart-pos { color: var(--green); }
+  .ecart-neg { color: var(--red); }
+  .ecart-zero { color: var(--text3); }
+
+  /* SESSIONS LIST */
+  .sessions-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .session-item { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .session-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; user-select: none; }
+  .session-head:hover { background: var(--surface2); }
+  .session-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .session-type-label { font-size: 13px; font-weight: 500; flex: 1; }
+  .session-check { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; transition: all .15s; }
+  .session-check.done { background: var(--green); border-color: var(--green); color: #fff; }
+  .session-plan-summary { font-size: 11px; color: var(--text3); }
+  .session-body { padding: 10px 12px; border-top: 1px solid var(--border); background: var(--surface2); display: none; }
+  .session-body.open { display: block; }
+  .inputs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .input-field { display: flex; flex-direction: column; gap: 4px; }
+  .input-field label { font-size: 11px; color: var(--text2); }
+  .input-field input { padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--surface); color: var(--text); width: 100%; }
+  .input-field input:focus { outline: none; border-color: var(--green); }
+  .plan-ref { font-size: 10px; color: var(--text3); margin-top: 1px; }
+
+  /* SESSION TYPE COLORS */
+  .dot-modere   { background: #378ADD; }
+  .dot-skills   { background: #639922; }
+  .dot-ligne    { background: #BA7517; }
+  .dot-volume   { background: #7F77DD; }
+  .dot-vitesse  { background: #D85A30; }
+  .dot-mep      { background: #D4537E; }
+  .dot-match    { background: #1D9E75; }
+  .dot-perso    { background: #888780; }
+
+  /* CHART SECTION */
+  .chart-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+  .chart-section h3 { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+  .chart-subtitle { font-size: 11px; color: var(--text3); margin-bottom: 12px; }
+  .chart-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .chart-tab { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text2); }
+  .chart-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  canvas { width: 100% !important; }
+
+  /* WEEKLY DETAIL TABLE */
+  .detail-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  .detail-table th { text-align: left; padding: 6px 8px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--text2); font-weight: 600; }
+  .detail-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .detail-table tr:last-child td { border-bottom: none; }
+
+  /* GUIDE PAGE */
+  .guide-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .guide-section h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+  .guide-section p, .guide-section li { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 6px; }
+  .guide-section ol, .guide-section ul { padding-left: 18px; }
+  .step-num { display: inline-flex; width: 22px; height: 22px; background: var(--green); color: #fff; border-radius: 50%; font-size: 11px; font-weight: 700; align-items: center; justify-content: center; margin-right: 8px; flex-shrink: 0; }
+  .step { display: flex; align-items: flex-start; gap: 0; margin-bottom: 10px; }
+  .step p { margin: 0; padding-top: 2px; }
+  code { background: var(--surface2); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; color: var(--text); }
+  .badge-option { display: inline-block; background: var(--green-light); color: var(--green); padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin: 2px; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--green); color: #fff; padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ Pré-Saison 2026-27</h1>
+  <span>Rugby · Charge GPS</span>
+  <div class="header-actions">
+    <button class="btn" onclick="exportData()">⬇ Exporter</button>
+    <button class="btn" onclick="triggerImport()">⬆ Importer</button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="btn btn-primary" onclick="saveAll()">💾 Sauvegarder</button>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="nav-tab active" onclick="showPage('saisie',this)">Saisie séances</div>
+  <div class="nav-tab" onclick="showPage('analyse',this)">Analyse</div>
+  <div class="nav-tab" onclick="showPage('plan',this)">Plan saison</div>
+  <div class="nav-tab" onclick="showPage('guide',this)">Guide déploiement</div>
+</nav>
+
+<div class="main">
+
+<!-- ═══════════════════════════════ PAGE SAISIE ═══════════════════════════════ -->
+<div id="page-saisie" class="page active">
+  <div class="week-bar" id="week-chips-saisie"></div>
+  <div class="two-col" id="saisie-cols"></div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE ANALYSE ═══════════════════════════════ -->
+<div id="page-analyse" class="page">
+  <div class="week-bar" id="week-chips-analyse"></div>
+  <div class="chart-section" style="margin-bottom:16px">
+    <h3>Contribution des séances au total semaine</h3>
+    <div class="chart-subtitle">Barres empilées · réalisé vs plan · par métrique</div>
+    <div class="chart-tabs" id="analyse-metric-tabs">
+      <div class="chart-tab active" onclick="setAnalyseMetric('course',this)">Course</div>
+      <div class="chart-tab" onclick="setAnalyseMetric('hsr',this)">HSR</div>
+      <div class="chart-tab" onclick="setAnalyseMetric('accdec',this)">AccDec</div>
+    </div>
+    <div class="legend" id="analyse-legend"></div>
+    <div style="position:relative;height:280px"><canvas id="chart-contrib" role="img" aria-label="Barres empilées contribution des séances"></canvas></div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="chart-section">
+        <h3>Tableau détail — Arrières / 3/4</h3>
+        <table class="detail-table" id="table-arr"></table>
+      </div>
+    </div>
+    <div>
+      <div class="chart-section">
+        <h3>Tableau détail — Avants</h3>
+        <table class="detail-table" id="table-av"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE PLAN SAISON ═══════════════════════════ -->
+<div id="page-plan" class="page">
+  <div class="chart-section" style="margin-bottom:16px">
+    <h3>Plan de charge saison — Course (m)</h3>
+    <div class="chart-subtitle">Cibles hebdomadaires · S30 → S37</div>
+    <div class="chart-tabs" id="plan-metric-tabs">
+      <div class="chart-tab active" onclick="setPlanMetric('course',this)">Course</div>
+      <div class="chart-tab" onclick="setPlanMetric('hsr',this)">HSR</div>
+      <div class="chart-tab" onclick="setPlanMetric('accdec',this)">AccDec</div>
+    </div>
+    <div class="legend" id="plan-legend"></div>
+    <div style="position:relative;height:300px"><canvas id="chart-plan" role="img" aria-label="Plan de charge saison barres empilées"></canvas></div>
+  </div>
+  <div class="two-col">
+    <div class="chart-section">
+      <h3>Récap hebdomadaire — ARR / 3/4</h3>
+      <table class="detail-table" id="table-plan-arr"></table>
+    </div>
+    <div class="chart-section">
+      <h3>Récap hebdomadaire — Avants</h3>
+      <table class="detail-table" id="table-plan-av"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE GUIDE ═══════════════════════════════ -->
+<div id="page-guide" class="page">
+  <div class="guide-section">
+    <h3>🚀 Déployer cette application gratuitement en 5 minutes</h3>
+    <p style="margin-bottom:16px">Ce fichier <code>index.html</code> est 100% autonome : pas de serveur, pas de base de données. Il s'héberge gratuitement sur GitHub Pages et fonctionne sur tous les navigateurs (ordinateur, tablette, téléphone).</p>
+
+    <div class="step"><span class="step-num">1</span><p>Créez un compte gratuit sur <strong>github.com</strong> si vous n'en avez pas.</p></div>
+    <div class="step"><span class="step-num">2</span><p>Cliquez sur <strong>« New repository »</strong>, nommez-le par exemple <code>preseason-rugby</code>, cochez <em>Public</em>, puis cliquez <strong>Create repository</strong>.</p></div>
+    <div class="step"><span class="step-num">3</span><p>Dans le dépôt créé, cliquez <strong>« Add file » → « Upload files »</strong>, glissez-déposez le fichier <code>index.html</code>, puis cliquez <strong>Commit changes</strong>.</p></div>
+    <div class="step"><span class="step-num">4</span><p>Allez dans <strong>Settings → Pages</strong> (menu gauche). Sous <em>Source</em>, sélectionnez la branche <code>main</code> et le dossier <code>/ (root)</code>, puis cliquez <strong>Save</strong>.</p></div>
+    <div class="step"><span class="step-num">5</span><p>Après ~1 minute, votre application est disponible à l'adresse :<br><code>https://VOTRE-PSEUDO.github.io/preseason-rugby/</code></p></div>
+  </div>
+
+  <div class="guide-section">
+    <h3>💾 Sauvegarde et partage des données</h3>
+    <ul>
+      <li>Les données sont sauvegardées automatiquement dans le navigateur (localStorage) sur chaque appareil.</li>
+      <li>Pour partager les données entre plusieurs appareils ou staff : utilisez <strong>Exporter</strong> (génère un fichier .json) et <strong>Importer</strong> sur l'autre appareil.</li>
+      <li>En option avancée, vous pouvez héberger sur <span class="badge-option">Netlify</span> <span class="badge-option">Vercel</span> pour obtenir une URL propre et personnalisée.</li>
+    </ul>
+  </div>
+
+  <div class="guide-section">
+    <h3>📱 Utilisation sur mobile</h3>
+    <ul>
+      <li>Ouvrez l'URL dans Safari (iOS) ou Chrome (Android).</li>
+      <li>Appuyez sur le bouton partage → <strong>« Ajouter à l'écran d'accueil »</strong> pour une icône comme une vraie app.</li>
+    </ul>
+  </div>
+
+  <div class="guide-section">
+    <h3>🔄 Mettre à jour les données de planification</h3>
+    <p>Toutes les cibles sont dans la section <code>DATA</code> au début du script JavaScript. Pour les modifier, ouvrez le fichier avec un éditeur de texte (Notepad, TextEdit, VS Code) et ajustez les valeurs, puis ré-uploadez sur GitHub.</p>
+  </div>
+</div>
+
+</div><!-- end main -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  DATA — Cibles pré-saison 2026-27
+// ════════════════════════════════════════════════════════════════
+const SESSION_COLORS = {
+  MODERE:  '#378ADD', SKILLS:  '#639922', LIGNE:   '#BA7517',
+  VOLUME:  '#7F77DD', VITESSE: '#D85A30', MEP:     '#D4537E',
+  MATCH:   '#1D9E75', PERSO:   '#888780'
+};
+const SESSION_TYPES = ['MODERE','SKILLS','LIGNE','VOLUME','VITESSE','MEP','MATCH','PERSO'];
+
+// Cibles moyennes par séance
+const SESSION_PLANS = {
+  ARR: {
+    MODERE:  { course: 1600, hsr: 150, accdec: 60  },
+    SKILLS:  { course: 700,  hsr: 10,  accdec: 23  },
+    LIGNE:   { course: 800,  hsr: 50,  accdec: 35  },
+    VOLUME:  { course: 3300, hsr: 600, accdec: 125 },
+    VITESSE: { course: 2500, hsr: 500, accdec: 100 },
+    MEP:     { course: 1100, hsr: 110, accdec: 35  },
+    MATCH:   { course: 3300, hsr: 750, accdec: 150 },
+    PERSO:   { course: 700,  hsr: 10,  accdec: 50  },
+  },
+  AV: {
+    MODERE:  { course: 1100, hsr: 20,  accdec: 40  },
+    SKILLS:  { course: 250,  hsr: 0,   accdec: 10  },
+    LIGNE:   { course: 400,  hsr: 10,  accdec: 15  },
+    VOLUME:  { course: 2800, hsr: 350, accdec: 80  },
+    VITESSE: { course: 1800, hsr: 240, accdec: 70  },
+    MEP:     { course: 800,  hsr: 20,  accdec: 22  },
+    MATCH:   { course: 1800, hsr: 220, accdec: 55  },
+    PERSO:   { course: 250,  hsr: 0,   accdec: 40  },
+  },
+};
+// 7S copie ARR (même référentiel)
+SESSION_PLANS['7S'] = SESSION_PLANS.ARR;
+
+// Planning hebdomadaire : liste de séances prévues par semaine
+const WEEKS = [
+  { num: 30, label: 'S30', sublabel: 'OFF SEASON', type: 'normal',
+    sessions: {
+      ARR: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
+      AV:  ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
+      '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
+    }
+  },
+  { num: 31, label: 'S31', sublabel: '', type: 'normal',
+    sessions: {
+      ARR: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
+      AV:  ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
+      '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
+    }
+  },
+  { num: 32, label: 'S32', sublabel: '', type: 'normal',
+    sessions: {
+      ARR: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
+      AV:  ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE','LIGNE','VOLUME'],
+      '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
+    }
+  },
+  { num: 33, label: 'S33', sublabel: 'Charge max', type: 'normal',
+    sessions: {
+      ARR: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE'],
+      AV:  ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','SKILLS','MODERE'],
+      '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
+    }
+  },
+  { num: 34, label: 'S34', sublabel: 'Récupération', type: 'recup',
+    sessions: {
+      ARR: ['PERSO','MODERE','SKILLS'],
+      AV:  ['PERSO','MODERE','SKILLS'],
+      '7S':['PERSO','SKILLS','LIGNE','VITESSE','MEP','MATCH'],
+    }
+  },
+  { num: 35, label: 'S35', sublabel: 'USI', type: 'usi',
+    sessions: {
+      ARR: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
+      AV:  ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
+      '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
+    }
+  },
+  { num: 36, label: 'S36', sublabel: 'Surcharge', type: 'normal',
+    sessions: {
+      ARR: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
+      AV:  ['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
+      '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME','VITESSE','MEP','MATCH'],
+    }
+  },
+  { num: 37, label: 'S37', sublabel: '', type: 'normal',
+    sessions: {
+      ARR: ['PERSO','SKILLS','MODERE','LIGNE','VOLUME'],
+      AV:  ['PERSO','SKILLS','MODERE','LIGNE','VOLUME'],
+      '7S':['PERSO','SKILLS','MODERE','LIGNE','VOLUME'],
+    }
+  },
+];
+
+// Coefficients de charge par semaine (base 1 = S33)
+const WEEK_COEFF = { 30:0.7, 31:0.8, 32:0.9, 33:1.0, 34:0.5, 35:1.0, 36:1.1, 37:0.8 };
+
+// Cibles hebdo calculées depuis séances × coefficient
+function calcWeekTarget(group, weekNum, metric) {
+  const w = WEEKS.find(x => x.num === weekNum);
+  if (!w) return 0;
+  const coeff = WEEK_COEFF[weekNum] || 1;
+  return Math.round(w.sessions[group].reduce((s, stype) => {
+    return s + (SESSION_PLANS[group][stype]?.[metric] || 0);
+  }, 0) * coeff);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  STORAGE
+// ════════════════════════════════════════════════════════════════
+let DB = {};
+function loadDB() {
+  try { DB = JSON.parse(localStorage.getItem('presaison2627') || '{}'); } catch(e){ DB = {}; }
+}
+function saveDB() {
+  try { localStorage.setItem('presaison2627', JSON.stringify(DB)); } catch(e){}
+}
+function getKey(group, weekNum, sessionIdx) { return `${group}_W${weekNum}_S${sessionIdx}`; }
+function getSessionData(group, weekNum, sessionIdx) {
+  return DB[getKey(group, weekNum, sessionIdx)] || { done: false, course:'', hsr:'', accdec:'' };
+}
+function setSessionData(group, weekNum, sessionIdx, data) {
+  DB[getKey(group, weekNum, sessionIdx)] = data;
+  saveDB();
+}
+loadDB();
+
+// ════════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════════
+let currentWeek = 30;
+let analyseMetric = 'course';
+let planMetric = 'course';
+let chartContrib = null;
+let chartPlan = null;
+
+// ════════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════════════════════
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  el.classList.add('active');
+  if (id === 'analyse') renderAnalysePage();
+  if (id === 'plan') renderPlanPage();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  WEEK CHIPS
+// ════════════════════════════════════════════════════════════════
+function renderWeekChips(containerId, onClick) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = WEEKS.map(w => {
+    const cls = ['week-chip', w.type === 'recup' ? 'recup':'', w.type === 'usi' ? 'usi':'', w.num === currentWeek ? 'active':''].join(' ');
+    const sub = w.sublabel ? ` <small style="opacity:.7;font-size:10px">${w.sublabel}</small>` : '';
+    return `<div class="${cls}" onclick="setWeek(${w.num},'${containerId}')">${w.label}${sub}</div>`;
+  }).join('');
+}
+function setWeek(num, fromChips) {
+  currentWeek = num;
+  renderWeekChips('week-chips-saisie');
+  renderWeekChips('week-chips-analyse');
+  renderSaisiePage();
+  if (document.getElementById('page-analyse').classList.contains('active')) renderAnalysePage();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SAISIE PAGE
+// ════════════════════════════════════════════════════════════════
+function renderSaisiePage() {
+  renderWeekChips('week-chips-saisie');
+  const w = WEEKS.find(x => x.num === currentWeek);
+  const cols = document.getElementById('saisie-cols');
+  cols.innerHTML = [
+    renderGroupCol('ARR', w, '3/4 · Arrières', 'badge-arr'),
+    renderGroupCol('AV', w, 'Avants', 'badge-av'),
+  ].join('');
+}
+
+function renderGroupCol(group, w, groupLabel, badgeClass) {
+  const sessions = w.sessions[group];
+  const metrics = ['course','hsr','accdec'];
+  const metricLabels = { course:'Course (m)', hsr:'HSR (m)', accdec:'AccDec' };
+
+  // KPIs
+  let realTot = { course:0, hsr:0, accdec:0 };
+  sessions.forEach((stype, si) => {
+    const d = getSessionData(group, w.num, si);
+    if (d.done) {
+      metrics.forEach(m => { realTot[m] += parseFloat(d[m]||0) || 0; });
+    }
+  });
+
+  const kpis = metrics.map(m => {
+    const plan = calcWeekTarget(group, w.num, m);
+    const real = Math.round(realTot[m]);
+    const hasDone = sessions.some((s,si) => getSessionData(group,w.num,si).done);
+    const ecart = real - plan;
+    const ecartCls = ecart > 0 ? 'ecart-pos' : ecart < 0 ? 'ecart-neg' : 'ecart-zero';
+    return `<div class="kpi">
+      <div class="kpi-label">${metricLabels[m]}</div>
+      <div class="kpi-plan">${plan.toLocaleString()}</div>
+      ${hasDone ? `<div class="kpi-real" style="color:var(--text2)">Réalisé : <strong>${real.toLocaleString()}</strong></div>
+      <div class="kpi-ecart ${ecartCls}">${ecart>0?'+':''}${ecart.toLocaleString()}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  // Sessions
+  const sessionItems = sessions.map((stype, si) => {
+    const d = getSessionData(group, w.num, si);
+    const coeff = WEEK_COEFF[w.num] || 1;
+    const plans = SESSION_PLANS[group][stype] || {};
+    const planSummary = `Course ${Math.round((plans.course||0)*coeff)} · HSR ${Math.round((plans.hsr||0)*coeff)} · AccDec ${Math.round((plans.accdec||0)*coeff)}`;
+    const dotCls = 'dot-' + stype.toLowerCase();
+    const checkCls = d.done ? 'done' : '';
+    const bodyOpen = d.done ? 'open' : '';
+    const vals = metrics.map(m => {
+      const pv = Math.round((plans[m]||0) * coeff);
+      return `<div class="input-field">
+        <label>${metricLabels[m]}</label>
+        <input type="number" min="0" placeholder="Réalisé"
+          value="${d[m]||''}"
+          oninput="updateSession('${group}',${w.num},${si},'${m}',this.value)">
+        <div class="plan-ref">Plan : ${pv.toLocaleString()}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="session-item" id="sess-${group}-${w.num}-${si}">
+      <div class="session-head" onclick="toggleSession('${group}',${w.num},${si})">
+        <div class="session-dot ${dotCls}"></div>
+        <span class="session-type-label">${stype}</span>
+        <span class="session-plan-summary">${planSummary}</span>
+        <div class="session-check ${checkCls}" id="check-${group}-${w.num}-${si}">${d.done?'✓':''}</div>
+      </div>
+      <div class="session-body ${bodyOpen}" id="body-${group}-${w.num}-${si}">
+        <div class="inputs-grid">${vals}</div>
+        <button class="btn btn-primary" style="margin-top:10px;font-size:12px" onclick="markDone('${group}',${w.num},${si})">
+          ${d.done ? '✓ Séance enregistrée' : '✓ Valider la séance'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="group-col">
+    <div class="group-header">
+      <span class="group-badge ${badgeClass}">${group}</span>
+      <h3>${groupLabel}</h3>
+    </div>
+    <div class="kpi-row">${kpis}</div>
+    <div class="sessions-list">${sessionItems}</div>
+  </div>`;
+}
+
+function toggleSession(group, weekNum, si) {
+  const body = document.getElementById(`body-${group}-${weekNum}-${si}`);
+  body.classList.toggle('open');
+}
+
+function updateSession(group, weekNum, si, metric, value) {
+  const d = getSessionData(group, weekNum, si);
+  d[metric] = value;
+  setSessionData(group, weekNum, si, d);
+  refreshKPIs(group, weekNum);
+}
+
+function markDone(group, weekNum, si) {
+  const d = getSessionData(group, weekNum, si);
+  d.done = true;
+  setSessionData(group, weekNum, si, d);
+  const check = document.getElementById(`check-${group}-${weekNum}-${si}`);
+  if (check) { check.classList.add('done'); check.textContent = '✓'; }
+  refreshKPIs(group, weekNum);
+  showToast('Séance enregistrée ✓');
+}
+
+function refreshKPIs(group, weekNum) {
+  // Re-render just the KPI row without full page refresh
+  renderSaisiePage();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  ANALYSE PAGE
+// ════════════════════════════════════════════════════════════════
+function setAnalyseMetric(m, el) {
+  analyseMetric = m;
+  document.querySelectorAll('#analyse-metric-tabs .chart-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderAnalysePage();
+}
+
+function renderAnalysePage() {
+  renderWeekChips('week-chips-analyse');
+  renderContribChart();
+  renderDetailTable('ARR', 'table-arr');
+  renderDetailTable('AV', 'table-av');
+}
+
+function renderContribChart() {
+  const w = WEEKS.find(x => x.num === currentWeek);
+  const groups = ['ARR','AV'];
+  const m = analyseMetric;
+  const coeff = WEEK_COEFF[currentWeek] || 1;
+
+  // Build datasets: one per session type
+  const allSessionTypes = [...new Set([
+    ...w.sessions.ARR, ...w.sessions.AV
+  ])];
+
+  // Labels: ARR sessions + AV sessions
+  const labels = ['ARR - Plan', 'ARR - Réalisé', 'AV - Plan', 'AV - Réalisé'];
+
+  // For each session type, compute contribution per bar
+  const datasets = SESSION_TYPES.filter(st => allSessionTypes.includes(st)).map(stype => {
+    const data = groups.flatMap(group => {
+      const sessions = w.sessions[group];
+      const planVal = sessions.filter(s => s === stype).length *
+        Math.round((SESSION_PLANS[group][stype]?.[m] || 0) * coeff);
+      const realVal = sessions.reduce((sum, s, si) => {
+        if (s !== stype) return sum;
+        const d = getSessionData(group, currentWeek, si);
+        return sum + (d.done ? (parseFloat(d[m]||0)||0) : 0);
+      }, 0);
+      return [planVal, realVal];
+    });
+    return {
+      label: stype,
+      data,
+      backgroundColor: SESSION_COLORS[stype] + 'cc',
+      borderColor: SESSION_COLORS[stype],
+      borderWidth: 0,
+    };
+  });
+
+  const legend = document.getElementById('analyse-legend');
+  legend.innerHTML = SESSION_TYPES.filter(st => allSessionTypes.includes(st)).map(st =>
+    `<div class="legend-item"><div class="legend-dot" style="background:${SESSION_COLORS[st]}"></div>${st}</div>`
+  ).join('');
+
+  if (chartContrib) chartContrib.destroy();
+  const ctx = document.getElementById('chart-contrib').getContext('2d');
+  chartContrib = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ` ${ctx.dataset.label}: ${Math.round(ctx.raw).toLocaleString()}` }
+      }},
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 12 } } },
+        y: { stacked: true, ticks: {
+          font: { size: 11 },
+          callback: v => v.toLocaleString()
+        }}
+      }
+    }
+  });
+}
+
+function renderDetailTable(group, tableId) {
+  const w = WEEKS.find(x => x.num === currentWeek);
+  const coeff = WEEK_COEFF[currentWeek] || 1;
+  const sessions = w.sessions[group];
+  const metrics = ['course','hsr','accdec'];
+  const mLabels = ['Course','HSR','AccDec'];
+
+  let rows = sessions.map((stype, si) => {
+    const d = getSessionData(group, currentWeek, si);
+    const plans = SESSION_PLANS[group][stype] || {};
+    return metrics.map((m, mi) => {
+      const plan = Math.round((plans[m]||0) * coeff);
+      const real = d.done ? (parseFloat(d[m]||0)||0) : null;
+      const ecart = real !== null ? Math.round(real - plan) : null;
+      const ecartCls = ecart === null ? '' : ecart >= 0 ? 'ecart-pos' : 'ecart-neg';
+      return `<tr>
+        ${mi===0 ? `<td rowspan="3" style="font-weight:500;vertical-align:middle;border-right:1px solid var(--border)">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${SESSION_COLORS[stype]};margin-right:6px"></span>${stype}
+        </td>` : ''}
+        <td style="color:var(--text2)">${mLabels[mi]}</td>
+        <td>${plan.toLocaleString()}</td>
+        <td>${real !== null ? Math.round(real).toLocaleString() : '—'}</td>
+        <td class="${ecartCls}">${ecart !== null ? (ecart>0?'+':'')+ecart.toLocaleString() : '—'}</td>
+      </tr>`;
+    }).join('');
+  }).join('');
+
+  document.getElementById(tableId).innerHTML = `
+    <thead><tr>
+      <th>Séance</th><th>Métrique</th>
+      <th>Plan</th><th>Réalisé</th><th>Écart</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  PLAN PAGE
+// ════════════════════════════════════════════════════════════════
+function setPlanMetric(m, el) {
+  planMetric = m;
+  document.querySelectorAll('#plan-metric-tabs .chart-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderPlanPage();
+}
+
+function renderPlanPage() {
+  const m = planMetric;
+  const weekLabels = WEEKS.map(w => w.num === currentWeek ? `► ${w.label}` : w.label);
+
+  // For each week, stacked by session type
+  const allTypes = SESSION_TYPES;
+  const groups = ['ARR','AV'];
+
+  // Labels: one bar per group per week
+  const labels = WEEKS.flatMap(w => [`ARR ${w.label}`, `AV ${w.label}`]);
+
+  const datasets = allTypes.map(stype => {
+    const data = WEEKS.flatMap(w => {
+      return groups.map(group => {
+        const coeff = WEEK_COEFF[w.num] || 1;
+        const count = w.sessions[group].filter(s => s === stype).length;
+        return Math.round(count * (SESSION_PLANS[group][stype]?.[m]||0) * coeff);
+      });
+    });
+    return {
+      label: stype,
+      data,
+      backgroundColor: SESSION_COLORS[stype] + 'cc',
+      borderColor: SESSION_COLORS[stype],
+      borderWidth: 0,
+    };
+  });
+
+  document.getElementById('plan-legend').innerHTML = allTypes.map(st =>
+    `<div class="legend-item"><div class="legend-dot" style="background:${SESSION_COLORS[st]}"></div>${st}</div>`
+  ).join('');
+
+  if (chartPlan) chartPlan.destroy();
+  const ctx = document.getElementById('chart-plan').getContext('2d');
+  chartPlan = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ` ${ctx.dataset.label}: ${Math.round(ctx.raw).toLocaleString()}` }
+      }},
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45, autoSkip: false } },
+        y: { stacked: true, ticks: { font: { size: 11 }, callback: v => v.toLocaleString() } }
+      }
+    }
+  });
+
+  // Tables
+  renderPlanTable('ARR','table-plan-arr');
+  renderPlanTable('AV','table-plan-av');
+}
+
+function renderPlanTable(group, tableId) {
+  const metrics = ['course','hsr','accdec'];
+  const mLabels = ['Course','HSR','AccDec'];
+  const rows = WEEKS.map(w => {
+    const coeff = WEEK_COEFF[w.num];
+    const cibles = metrics.map(m => calcWeekTarget(group, w.num, m).toLocaleString());
+    const isActive = w.num === currentWeek;
+    const style = isActive ? 'background:var(--green-light);font-weight:500' : '';
+    return `<tr style="${style}">
+      <td>${w.label}${w.sublabel?' <small style="color:var(--text3)">'+w.sublabel+'</small>':''}</td>
+      <td>${Math.round(coeff*100)}%</td>
+      ${cibles.map(c=>`<td>${c}</td>`).join('')}
+    </tr>`;
+  }).join('');
+
+  document.getElementById(tableId).innerHTML = `
+    <thead><tr><th>Semaine</th><th>Charge%</th><th>Course</th><th>HSR</th><th>AccDec</th></tr></thead>
+    <tbody>${rows}</tbody>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  EXPORT / IMPORT
+// ════════════════════════════════════════════════════════════════
+function exportData() {
+  const json = JSON.stringify(DB, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `presaison2627_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  showToast('Export téléchargé ✓');
+}
+function triggerImport() { document.getElementById('import-file').click(); }
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      DB = JSON.parse(ev.target.result);
+      saveDB();
+      renderSaisiePage();
+      showToast('Données importées ✓');
+    } catch(err) { alert('Fichier invalide'); }
+  };
+  reader.readAsText(file);
+}
+function saveAll() { saveDB(); showToast('Données sauvegardées ✓'); }
+
+// ════════════════════════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════════════
+renderWeekChips('week-chips-saisie');
+renderWeekChips('week-chips-analyse');
+renderSaisiePage();
+</script>
+</body>
+</html>
